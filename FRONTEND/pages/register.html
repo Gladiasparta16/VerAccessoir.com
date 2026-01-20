@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S'inscrire - VerAccessoire</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="header-content">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                <h1 class="logo">VerAccessoire 👓</h1>
+                </a>
+                <p style="text-align: center; color: #ff6a00; font-style: italic; font-size: 13px; margin-top: -10px;">Le chic à portée de clic</p>
+                <nav class="nav">
+                    <a href="../index.html">Accueil</a>
+                    <a href="shop.html">Boutique</a>
+                    <a href="about.html">À propos</a>
+                    <a href="contact.html">Contact</a>
+                </nav>
+                <a href="cart.html" class="cart-icon">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Créer un Compte</h2>
+                <p>Rejoignez la famille VerAccessoire</p>
+            </div>
+        </section>
+
+        <!-- Register Form Section -->
+        <section class="section">
+            <div class="container">
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <form id="registerForm" class="form-container">
+                        <div class="form-group">
+                            <label class="form-label">Nom Complet</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                class="form-input" 
+                                placeholder="John Doe" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                class="form-input" 
+                                placeholder="votre@email.com" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                class="form-input" 
+                                placeholder="Minimum 6 caractères" 
+                                required
+                                minlength="6"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirmer le mot de passe</label>
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                class="form-input" 
+                                placeholder="Confirmez votre mot de passe" 
+                                required
+                                minlength="6"
+                            >
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                            S'inscrire
+                        </button>
+                    </form>
+
+                    <div style="text-align: center; margin-top: 20px; color: #666;">
+                        <p>Déjà un compte? <a href="login.html" style="color: #ff6a00; text-decoration: none; font-weight: bold;">Se connecter</a></p>
+                    </div>
+
+                    <div style="margin-top: 30px; padding: 15px; background: #f0f8ff; border-radius: 8px; font-size: 13px; color: #333;">
+                        <p><strong>✓ Avantages d'un compte:</strong></p>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Accès à votre historique de commandes</li>
+                            <li>Paiement plus rapide</li>
+                            <li>Offres exclusives</li>
+                            <li>Suivi des livraisons</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-sections">
+            <div class="footer-section">
+                <h4>VerAccessoire</h4>
+                <p>Des lunettes qui révèlent ton style</p>
+            </div>
+            <div class="footer-section">
+                <h4>Liens Rapides</h4>
+                <ul>
+                    <li><a href="../index.html">Accueil</a></li>
+                    <li><a href="shop.html">Boutique</a></li>
+                    <li><a href="about.html">À propos</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul>
+                    <li>📧 info@veraccessoire.com</li>
+                    <li>📱 +225 07 87 98 51 82</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Suivez-nous</h4>
+                <div style="display: flex; gap: 10px;">
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee; margin-top: 20px;">
+            <p>&copy; 2026 VerAccessoire. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/components/products.js"></script>
+    <script src="../js/components/cart.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Gestion du formulaire d'inscription
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (password !== confirmPassword) {
+                showAlert('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('Le mot de passe doit avoir au moins 6 caractères', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, name })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Sauvegarder le token
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showAlert('Inscription réussie! Bienvenue ' + data.user.name, 'success');
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 1500);
+                } else {
+                    showAlert(data.error || data.message || 'Erreur lors de l\'inscription', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur serveur: ' + error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

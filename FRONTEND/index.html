@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VerAccessoire - Découvrez notre collection exclusive de lunettes modernes et tendance">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>VerAccessoire | Lunettes Tendance</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <a href="./index.html" class="logo">👓 VerAccessoire</a>
+        <p class="tagline">Le chic à portée de clic</p>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="active">Accueil</a>
+        <a href="pages/shop.html">Boutique</a>
+        <a href="pages/about.html">À propos</a>
+        <a href="pages/contact.html">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <a href="pages/login.html?type=client" class="login-link" title="Connexion Client">👤 Connexion</a>
+        <button class="icon-btn" id="cartBtn" title="Panier" style="position: relative;">
+          🛒 <span class="cart-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; min-width: 24px; line-height: 24px; text-align: center;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <h1>Des lunettes qui révèlent ton style</h1>
+      <p>Découvrez notre collection exclusive de lunettes modernes et tendance pour hommes et femmes</p>
+      <a href="pages/shop.html" class="btn btn-primary">Voir la collection</a>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="featured">
+    <div class="container">
+      <div class="section-header">
+        <h2>Produits en vedette</h2>
+        <p>Sélection des meilleures lunettes tendance</p>
+      </div>
+      <div class="products"></div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3 class="stat-number">500+</h3>
+          <p class="stat-label">Clients satisfaits</p>
+        </div>
+        <div class="stat-card">
+          <h3 class="stat-number">100+</h3>
+          <p class="stat-label">Produits disponibles</p>
+        </div>
+        <div class="stat-card">
+          <h3 class="stat-number">24/7</h3>
+          <p class="stat-label">Support client</p>
+        </div>
+        <div class="stat-card">
+          <h3 class="stat-number">100%</h3>
+          <p class="stat-label">Satisfait ou remboursé</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-section">
+        <h3>À propos</h3>
+        <ul>
+          <li><a href="pages/about.html">À propos de nous</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="pages/contact.html">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Retours</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="pages/legal.html#conditions">Conditions</a></li>
+          <li><a href="pages/legal.html#confidentialite">Confidentialité</a></li>
+          <li><a href="pages/legal.html#cookies">Cookies</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="#" id="facebookLink">Facebook</a></li>
+          <li><a href="#" id="instagramLink">Instagram</a></li>
+          <li><a href="#" id="whatsappLink">WhatsApp</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Admin</h3>
+        <ul>
+          <li><a href="pages/admin-login.html">Connexion Admin</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VerAccessoire. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="js/components/products.js"></script>
+  <script src="js/components/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart-badge.js"></script>
+
+  <script>
+    function loadSocialLinks() {
+      const saved = localStorage.getItem('siteConfig');
+      if (saved) {
+        const config = JSON.parse(saved);
+        if (config.social?.facebook) document.getElementById('facebookLink').href = config.social.facebook;
+        if (config.social?.instagram) document.getElementById('instagramLink').href = config.social.instagram;
+        if (config.social?.whatsapp) document.getElementById('whatsappLink').href = config.social.whatsapp;
+      }
+    }
+
+    loadSocialLinks();
+    
+    // Bouton panier
+    document.getElementById('cartBtn').addEventListener('click', () => {
+      window.location.href = 'pages/cart.html';
+    });
+  </script>
+</body>
+</html>

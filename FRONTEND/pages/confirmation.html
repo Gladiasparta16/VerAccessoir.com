@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Commande - VerAccessoire</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .confirmation-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .success-badge {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            animation: bounce 0.6s;
+            margin-bottom: 20px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .order-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .order-header h3 {
+            margin: 0;
+        }
+
+        .order-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff6a00;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .items-list {
+            margin: 20px 0;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            flex: 1;
+        }
+
+        .item-qty {
+            color: #666;
+            margin: 0 15px;
+        }
+
+        .item-price {
+            font-weight: bold;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .totals {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ff6a00;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .total-row.final {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6a00;
+        }
+
+        .payment-info {
+            background: #f0f8ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-buttons a,
+        .action-buttons button {
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .print-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background: #45a049;
+        }
+
+        .contact-info {
+            background: #fff3e0;
+            border-left: 4px solid #ff6a00;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .contact-links a {
+            display: inline-block;
+            padding: 8px 15px;
+            background: white;
+            color: #ff6a00;
+            border: 1px solid #ff6a00;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .contact-links a:hover {
+            background: #ff6a00;
+            color: white;
+        }
+
+        @media print {
+            .action-buttons,
+            .contact-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">👓 VerAccessoire</a>
+            <nav class="nav">
+                <a href="../index.html">Accueil</a>
+                <a href="shop.html">Boutique</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Commande Confirmée ✓</h2>
+                <p>Merci pour votre achat!</p>
+            </div>
+        </section>
+
+        <div class="confirmation-container">
+            <div class="success-badge">
+                <div class="success-icon">✅</div>
+                <h2>Commande Validée!</h2>
+                <p>Votre commande a été confirmée et traitée avec succès.</p>
+            </div>
+
+            <!-- Détails de la commande -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Numéro de Commande</h3>
+                        <p class="order-number" id="orderNumber">#CMD-2024001</p>
+                    </div>
+                    <span class="status-badge status-pending" id="statusBadge">En Attente</span>
+                </div>
+
+                <div class="order-details">
+                    <div class="detail-item">
+                        <div class="detail-label">📅 Date & Heure</div>
+                        <div class="detail-value" id="orderTime"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">💳 Méthode de Paiement</div>
+                        <div class="detail-value" id="paymentMethod"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">👤 Nom Client</div>
+                        <div class="detail-value" id="customerName"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">📧 Email</div>
+                        <div class="detail-value" id="customerEmail"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">📱 Téléphone</div>
+                        <div class="detail-value" id="customerPhone"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">📍 Adresse de Livraison</div>
+                        <div class="detail-value" id="customerAddress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles commandés -->
+            <div class="order-card">
+                <h3>Résumé de Commande</h3>
+                <div class="items-list" id="itemsList"></div>
+
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Sous-total:</span>
+                        <span id="subtotal">0</span> FCFA
+                    </div>
+                    <div class="total-row">
+                        <span>Taxe (10%):</span>
+                        <span id="tax">0</span> FCFA
+                    </div>
+                    <div class="total-row final">
+                        <span>TOTAL À PAYER:</span>
+                        <span id="total">0</span> FCFA
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations de paiement -->
+            <div class="payment-info" id="paymentInfo"></div>
+
+            <!-- Prochaines étapes -->
+            <div class="contact-info">
+                <h3>📞 Besoin d'Aide?</h3>
+                <p>Si vous avez des questions sur votre commande, contactez-nous:</p>
+                <div class="contact-links">
+                    <a id="whatsappLink" href="#">💬 WhatsApp</a>
+                    <a id="emailLink" href="#">📧 Email</a>
+                    <a id="phoneLink" href="#">📞 Appeler</a>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="action-buttons">
+                <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+                <a href="shop.html" class="btn btn-primary">Continuer les achats</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div style="text-align: center; padding: 20px;">
+            <p>&copy; 2026 VerAccessoire - Merci pour votre achat!</p>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/components/products.js"></script>
+    <script src="../js/components/cart.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Charger la commande
+        function loadOrderData() {
+            const order = localStorage.getItem('lastOrder');
+            if (!order) {
+                window.location.href = 'shop.html';
+                return;
+            }
+
+            const data = JSON.parse(order);
+
+            // Numéro de commande
+            const orderNum = `CMD-${data.order_id.slice(-6).toUpperCase()}`;
+            document.getElementById('orderNumber').textContent = '#' + orderNum;
+
+            // Date et heure
+            const date = new Date(data.timestamp);
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('orderTime').textContent = date.toLocaleDateString('fr-FR', options);
+
+            // Méthode de paiement
+            const paymentNames = {
+                'orange-money': '🟠 Orange Money',
+                'moov-money': '🔵 Moov Money',
+                'mtn-money': '🟡 MTN Money',
+                'wave': '💳 Wave'
+            };
+            document.getElementById('paymentMethod').textContent = paymentNames[data.payment_method] || data.payment_method;
+
+            // Infos client
+            document.getElementById('customerName').textContent = data.customer.name;
+            document.getElementById('customerEmail').textContent = data.customer.email;
+            document.getElementById('customerPhone').textContent = data.customer.phone;
+            document.getElementById('customerAddress').textContent = data.customer.address;
+
+            // Articles
+            let subtotal = 0;
+            document.getElementById('itemsList').innerHTML = data.items.map(item => {
+                const total = item.price * item.quantity;
+                subtotal += total;
+                return `
+                    <div class="item-row">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-qty">x${item.quantity}</div>
+                        <div class="item-price">${total} FCFA</div>
+                    </div>
+                `;
+            }).join('');
+
+            const tax = Math.round(subtotal * 0.1);
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = subtotal;
+            document.getElementById('tax').textContent = tax;
+            document.getElementById('total').textContent = total;
+
+            // Info paiement personnalisée
+            loadPaymentInfo(data.payment_method, total);
+
+            // Charger les liens de contact
+            loadContactLinks();
+        }
+
+        function loadPaymentInfo(method, total) {
+            const messages = {
+                'orange-money': `
+                    <h4>💳 Instructions Orange Money</h4>
+                    <ol>
+                        <li>Composez <strong>*144#</strong></li>
+                        <li>Sélectionnez "Paiement de services"</li>
+                        <li>Entrez le numéro marchand</li>
+                        <li>Confirmez le montant: <strong>${total} FCFA</strong></li>
+                        <li>Validez avec votre code PIN</li>
+                    </ol>
+                    <p>⚠️ Montant à envoyer: <strong>${total} FCFA</strong></p>
+                `,
+                'moov-money': `
+                    <h4>💳 Instructions Moov Money</h4>
+                    <ol>
+                        <li>Ouvrez Moov Money</li>
+                        <li>Sélectionnez "Paiement de services"</li>
+                        <li>Entrez le numéro marchand</li>
+                        <li>Confirmez le montant: <strong>${total} FCFA</strong></li>
+                        <li>Validez votre transaction</li>
+                    </ol>
+                    <p>⚠️ Montant à envoyer: <strong>${total} FCFA</strong></p>
+                `,
+                'mtn-money': `
+                    <h4>💳 Instructions MTN Money</h4>
+                    <ol>
+                        <li>Composez <strong>*156#</strong></li>
+                        <li>Sélectionnez "Paiement marchands"</li>
+                        <li>Entrez le numéro marchand</li>
+                        <li>Confirmez le montant: <strong>${total} FCFA</strong></li>
+                        <li>Validez avec votre code PIN</li>
+                    </ol>
+                    <p>⚠️ Montant à envoyer: <strong>${total} FCFA</strong></p>
+                `,
+                'wave': `
+                    <h4>💳 Paiement Wave</h4>
+                    <p>Vous allez être redirigé vers Wave pour compléter votre paiement.</p>
+                    <p>Montant à payer: <strong>${total} FCFA</strong></p>
+                    <a href="#" class="btn btn-primary" style="display: inline-block; margin-top: 10px;">Payer avec Wave</a>
+                `
+            };
+
+            document.getElementById('paymentInfo').innerHTML = messages[method] || '';
+        }
+
+        function loadContactLinks() {
+            const saved = localStorage.getItem('siteConfig');
+            let config = {};
+
+            if (saved) {
+                config = JSON.parse(saved);
+            }
+
+            const phone = config.contact?.phone || '+2250787985182';
+            const email = config.contact?.email || 'info@veraccessoire.com';
+            const whatsapp = config.social?.whatsapp || `https://wa.me/${phone.replace(/\D/g, '')}`;
+
+            document.getElementById('whatsappLink').href = whatsapp;
+            document.getElementById('emailLink').href = `mailto:${email}`;
+            document.getElementById('phoneLink').href = `tel:${phone}`;
+        }
+
+        // Initialiser
+        loadOrderData();
+
+        // Afficher une notification
+        setTimeout(() => {
+            showAlert('Votre commande est confirmée! Vous allez recevoir un email de confirmation.', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panier | VerAccessoire</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .cart-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .cart-items {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .item-info {
+      flex: 1;
+    }
+    .item-price {
+      font-weight: bold;
+      color: var(--color-primary);
+      margin: 0 20px;
+    }
+    .item-qty {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .item-qty button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .checkout-form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .summary {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: right;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .summary-total {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--color-primary);
+      border-top: 2px solid #ddd;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    .message {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .message.success {
+      background: #e6ffe6;
+      color: green;
+      display: block;
+    }
+    .message.error {
+      background: #ffe6e6;
+      color: red;
+      display: block;
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <a href="../index.html" class="logo">👓 VerAccessoire</a>
+        <p class="tagline">Le chic à portée de clic</p>
+      </div>
+      <nav class="nav">
+        <a href="../index.html">Accueil</a>
+        <a href="shop.html">Boutique</a>
+        <a href="about.html">À propos</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <a href="login.html?type=client" class="login-link" title="Connexion Client">👤 Connexion</a>
+        <button class="icon-btn" id="cartBtn" title="Panier" style="position: relative;">
+          🛒 <span class="cart-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; min-width: 24px; line-height: 24px; text-align: center;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container cart-container">
+    <h1>Votre Panier</h1>
+
+    <div id="successMessage" class="message success"></div>
+    <div id="errorMessage" class="message error"></div>
+
+    <div id="emptyCart" class="empty-cart" style="display: none;">
+      <h2>Votre panier est vide</h2>
+      <p>Ajoutez des produits à votre panier pour continuer</p>
+      <a href="shop.html" class="btn btn-primary" style="margin-top: 20px;">Continuer vos achats</a>
+    </div>
+
+    <div id="cartContent" style="display: none;">
+      <div class="cart-items" id="cartItems"></div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Sous-total:</span>
+          <span id="subtotal">0 FCFA</span>
+        </div>
+        <div class="summary-row">
+          <span>Frais de port:</span>
+          <span>0 FCFA</span>
+        </div>
+        <div class="summary-total">
+          Total: <span id="total">0 FCFA</span>
+        </div>
+      </div>
+
+      <div class="checkout-form">
+        <h2>Informations de Livraison</h2>
+        <form id="checkoutForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">Prénom:</label>
+              <input type="text" id="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Nom:</label>
+              <input type="text" id="lastName" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Adresse:</label>
+            <input type="text" id="address" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">Ville:</label>
+              <input type="text" id="city" required>
+            </div>
+            <div class="form-group">
+              <label for="zipcode">Code Postal:</label>
+              <input type="text" id="zipcode" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Pays:</label>
+            <input type="text" id="country" value="France" required>
+          </div>
+
+          <h2 style="margin-top: 30px;">Informations de Paiement</h2>
+
+          <div class="form-group">
+            <label for="cardName">Nom sur la carte:</label>
+            <input type="text" id="cardName" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cardNumber">Numéro de carte:</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cardExpiry">Date d'expiration:</label>
+              <input type="text" id="cardExpiry" placeholder="MM/YY" required>
+            </div>
+            <div class="form-group">
+              <label for="cardCVC">CVC:</label>
+              <input type="text" id="cardCVC" placeholder="123" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 16px; margin-top: 20px;">
+            Confirmer la Commande
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-section">
+        <h3>À propos</h3>
+        <ul>
+          <li><a href="about.html">À propos de nous</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Retours</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="#">Conditions</a></li>
+          <li><a href="#">Confidentialité</a></li>
+          <li><a href="#">Cookies</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Twitter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VerAccessoire. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/bootstrap.js"></script>
+  <script src="../js/components/products.js"></script>
+  <script src="../js/components/cart.js"></script>
+  <script src="../js/cart-badge.js"></script>
+  <script>
+    // Charger le panier
+    function loadCart() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      // Valider et nettoyer
+      if (!Array.isArray(cart)) {
+          cart = [];
+      }
+      cart = cart.filter(item => item && item.id && item.name && item.price);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      const cartContainer = document.getElementById('cartItems');
+      const emptyCart = document.getElementById('emptyCart');
+      const cartContent = document.getElementById('cartContent');
+      
+      if (cart.length === 0) {
+          emptyCart.style.display = 'block';
+          cartContent.style.display = 'none';
+          updateCartBadge();
+          return;
+      }
+      
+      emptyCart.style.display = 'none';
+      cartContent.style.display = 'block';
+      
+      cartContainer.innerHTML = cart.map((item, index) => `
+          <div class="cart-item">
+              <div class="item-info">
+                  <p><strong>${item.name}</strong></p>
+              </div>
+              <p class="item-price">${item.price} FCFA</p>
+              <div class="item-qty">
+                  <button onclick="changeQty(${index}, -1)">-</button>
+                  <input type="number" value="${item.quantity || 1}" min="1" 
+                     onchange="updateQty(${index}, this.value)" style="width: 50px; text-align: center;">
+                  <button onclick="changeQty(${index}, 1)">+</button>
+              </div>
+              <button onclick="removeItem(${index})" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Supprimer</button>
+          </div>
+      `).join('');
+      
+      updateTotal();
+      updateCartBadge();
+    }
+
+    // Mettre à jour la quantité
+    function updateQty(index, newValue) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (cart[index]) {
+        cart[index].quantity = parseInt(newValue) || 1;
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1);
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCart();
+      }
+    }
+
+    // Changer la quantité avec les boutons +/-
+    function changeQty(index, change) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (cart[index]) {
+        cart[index].quantity = (cart[index].quantity || 1) + change;
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1);
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCart();
+      }
+    }
+
+    // Supprimer un article
+    function removeItem(index) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+
+    // Calculer le total
+    function updateTotal() {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+        const total = subtotal;
+
+        const subtotalEl = document.getElementById('subtotal');
+        const totalEl = document.getElementById('total');
+        
+        if (subtotalEl) {
+          subtotalEl.textContent = subtotal.toLocaleString() + ' FCFA';
+        }
+        if (totalEl) {
+          totalEl.textContent = total.toLocaleString() + ' FCFA';
+        }
+        
+        console.log('updateTotal() called - Subtotal:', subtotal, 'Total:', total);
+      } catch (error) {
+        console.error('ERROR in updateTotal:', error);
+      }
+    }
+
+    // Soumettre la commande
+    document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (cart.length === 0) {
+        alert('Votre panier est vide');
+        return;
+      }
+
+      const order = {
+        id: 'CMD' + Date.now(),
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        zipcode: document.getElementById('zipcode').value,
+        country: document.getElementById('country').value,
+        cardName: document.getElementById('cardName').value,
+        items: cart,
+        date: new Date().toISOString(),
+        status: 'Confirmée',
+        total: parseFloat(document.getElementById('total').textContent)
+      };
+
+      // Sauvegarder la commande
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+
+      // Vider le panier
+      localStorage.setItem('cart', '[]');
+
+      // Afficher le message de succès
+      const successMsg = document.getElementById('successMessage');
+      successMsg.textContent = `✓ Commande confirmée! Numéro: ${order.id}`;
+      successMsg.style.display = 'block';
+
+      // Rediriger après 2 secondes
+      setTimeout(() => {
+        window.location.href = '../index.html';
+      }, 2000);
+    });
+
+    // Charger le panier au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DEBUG: DOMContentLoaded déclenché');
+      loadCart();
+    });
+  </script>
+</body>
+</html>

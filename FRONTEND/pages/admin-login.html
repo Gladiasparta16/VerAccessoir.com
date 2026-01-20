@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion Admin | VerAccessoire</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .login-container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .error-msg {
+      color: red;
+      margin-top: 15px;
+      display: none;
+      padding: 10px;
+      background-color: #ffe6e6;
+      border-radius: 4px;
+    }
+    .success-msg {
+      color: green;
+      margin-top: 15px;
+      display: none;
+      padding: 10px;
+      background-color: #e6ffe6;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <a href="../index.html" class="logo">👓 VerAccessoire</a>
+        <p class="tagline">Le chic à portée de clic</p>
+      </div>
+      <nav class="nav">
+        <a href="../index.html">Accueil</a>
+        <a href="shop.html">Boutique</a>
+        <a href="about.html">À propos</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <button class="icon-btn" id="cartBtn" title="Panier" style="position: relative;">
+          🛒 <span class="cart-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; min-width: 24px; line-height: 24px; text-align: center;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container login-container">
+    <h1>Connexion Admin</h1>
+    
+    <form id="adminForm">
+      <div class="form-group">
+        <label for="adminEmail">Email Admin:</label>
+        <input type="email" id="adminEmail" name="adminEmail" required>
+      </div>
+      <div class="form-group">
+        <label for="adminPassword">Mot de passe:</label>
+        <input type="password" id="adminPassword" name="adminPassword" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;">Se connecter</button>
+      <div class="error-msg" id="adminError"></div>
+      <div class="success-msg" id="adminSuccess"></div>
+    </form>
+      <div style="text-align: center; margin-top: 20px;">
+        <p style="margin-bottom: 10px;">
+          <a href="/forgot-password.html" style="color: #ff6a00; text-decoration: none; font-weight: bold;">🔑 Mot de passe oublié?</a>
+        </p>
+      </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-section">
+        <h3>À propos</h3>
+        <ul>
+          <li><a href="about.html">À propos de nous</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Retours</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="legal.html#conditions">Conditions</a></li>
+          <li><a href="legal.html#confidentialite">Confidentialité</a></li>
+          <li><a href="legal.html#cookies">Cookies</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="#" id="facebookLink">Facebook</a></li>
+          <li><a href="#" id="instagramLink">Instagram</a></li>
+          <li><a href="#" id="whatsappLink">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VerAccessoire. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/bootstrap.js"></script>
+  <script src="../js/cart-badge.js"></script>
+  <script>
+    document.getElementById('adminForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value.trim();
+      const errorMsg = document.getElementById('adminError');
+      const successMsg = document.getElementById('adminSuccess');
+
+      // Réinitialiser les messages
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+      errorMsg.textContent = '';
+      successMsg.textContent = '';
+
+      // Identifiants Admin par défaut
+      const DEFAULT_ADMIN_EMAIL = 'admin@veraccessoire.com';
+      const DEFAULT_ADMIN_PASSWORD = 'admin123';
+
+      if (!email || !password) {
+        errorMsg.textContent = '✗ Veuillez remplir tous les champs';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      if (email === DEFAULT_ADMIN_EMAIL && password === DEFAULT_ADMIN_PASSWORD) {
+          // Sauvegarder l'utilisateur admin avec clé spécifique
+          localStorage.setItem('adminUser', JSON.stringify({ 
+            email: email,
+            role: 'admin',
+            loginTime: new Date().toISOString()
+          }));
+          
+          successMsg.textContent = '✓ Connexion réussie! Redirection en cours...';
+          successMsg.style.display = 'block';
+          
+          // Rediriger vers le panel admin (chemin absolu pour fiabilité)
+          setTimeout(() => {
+            window.location.href = '/admin.html';
+          }, 800);
+        } else {
+          errorMsg.textContent = '✗ Email ou mot de passe incorrect';
+          errorMsg.style.display = 'block';
+          document.getElementById('adminPassword').value = '';
+        }
+    });
+
+    function loadSocialLinks() {
+      const saved = localStorage.getItem('siteConfig');
+      if (saved) {
+        try {
+          const config = JSON.parse(saved);
+          if (config.social?.facebook) document.getElementById('facebookLink').href = config.social.facebook;
+          if (config.social?.instagram) document.getElementById('instagramLink').href = config.social.instagram;
+          if (config.social?.whatsapp) document.getElementById('whatsappLink').href = config.social.whatsapp;
+        } catch (err) {
+          console.error('Erreur chargement liens sociaux:', err);
+        }
+      }
+    }
+    
+    loadSocialLinks();
+    document.getElementById('cartBtn').addEventListener('click', () => {
+      window.location.href = 'cart.html';
+    });
+  </script>
+</body>
+</html>

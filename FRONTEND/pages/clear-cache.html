@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nettoyer le Cache</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="container" style="padding: 40px 20px; text-align: center;">
+    <h1>Nettoyage du Cache</h1>
+    <p>Cliquez sur le bouton ci-dessous pour vider le panier et les données de test</p>
+    
+    <button class="btn btn-primary" onclick="clearCache()" style="padding: 15px 30px; font-size: 18px; margin: 20px 0;">
+      🗑️ Vider le Cache
+    </button>
+    
+    <p id="status" style="margin-top: 20px; font-weight: bold; color: green;"></p>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/bootstrap.js"></script>
+  <script>
+    function clearCache() {
+      try {
+        // Vider tous les éléments du localStorage
+        localStorage.removeItem('cart');
+        localStorage.removeItem('adminProducts');
+        localStorage.removeItem('orders');
+        localStorage.removeItem('siteConfig');
+        
+        const status = document.getElementById('status');
+        status.textContent = '✓ Cache vidé avec succès! Le panier est maintenant vide.';
+        status.style.color = 'green';
+        
+        // Rediriger vers l'accueil après 2 secondes
+        setTimeout(() => {
+          window.location.href = '../index.html';
+        }, 2000);
+      } catch (error) {
+        const status = document.getElementById('status');
+        status.textContent = '❌ Erreur: ' + error.message;
+        status.style.color = 'red';
+      }
+    }
+    
+    // Afficher les données actuelles
+    console.log('Cart actuel:', localStorage.getItem('cart'));
+    console.log('Admin Products:', localStorage.getItem('adminProducts'));
+  </script>
+</body>
+</html>

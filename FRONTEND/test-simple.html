@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Simple</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #log { background: #f0f0f0; padding: 15px; border-radius: 5px; height: 300px; overflow-y: auto; font-family: monospace; white-space: pre-wrap; }
+    button { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Test Simple API</h1>
+  <button onclick="testHealth()">Test Health</button>
+  <button onclick="testLogin()">Test Login</button>
+  <div id="log"></div>
+
+  <script>
+    function addLog(msg) {
+      document.getElementById('log').innerHTML += msg + '\n';
+      document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+    }
+
+    async function testHealth() {
+      addLog('\n=== Test /api/health ===');
+      try {
+        const resp = await fetch('http://localhost:5000/api/health');
+        addLog('Status: ' + resp.status);
+        const data = await resp.json();
+        addLog('Data: ' + JSON.stringify(data));
+      } catch (e) {
+        addLog('ERROR: ' + e.message);
+      }
+    }
+
+    async function testLogin() {
+      addLog('\n=== Test /api/auth/login ===');
+      try {
+        const resp = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'admin@veraccessoire.com', password: 'admin123' })
+        });
+        addLog('Status: ' + resp.status);
+        const data = await resp.json();
+        addLog('Data: ' + JSON.stringify(data, null, 2));
+        if (data.access_token) {
+          addLog('SUCCESS: Token = ' + data.access_token.substring(0, 30) + '...');
+        }
+      } catch (e) {
+        addLog('ERROR: ' + e.message);
+      }
+    }
+
+    addLog('Page chargée - Cliquez sur les boutons');
+  </script>
+</body>
+</html>

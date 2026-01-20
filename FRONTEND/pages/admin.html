@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panneau Admin | VerAccessoire</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .admin-container {
+      padding: 40px 20px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .user-info {
+      font-size: 14px;
+      color: #666;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .form-group input[type="file"] {
+      padding: 8px;
+    }
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .form-group-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .btn-danger {
+      background: #dc3545 !important;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-danger:hover {
+      background: #c82333 !important;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .table th {
+      background: #f5f5f5;
+      padding: 10px;
+      text-align: left;
+      font-weight: bold;
+      border: 1px solid #ddd;
+    }
+    .table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    .message {
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      display: none;
+    }
+    .message.success {
+      background: #e6ffe6;
+      color: green;
+      display: block;
+    }
+    .message.error {
+      background: #ffe6e6;
+      color: red;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <a href="../index.html" class="logo">👓 VerAccessoire</a>
+        <p class="tagline">Le chic à portée de clic</p>
+      </div>
+      <nav class="nav">
+        <a href="../index.html">Accueil</a>
+        <a href="shop.html">Boutique</a>
+        <a href="about.html">À propos</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <button class="icon-btn" id="logoutBtn" title="Déconnexion">
+          🚪 Déconnexion
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Panel Content -->
+  <div class="container admin-container">
+    <div class="admin-header">
+      <h1>Panneau d'Administration</h1>
+      <div class="user-info">
+        Connecté en tant que: <strong id="userEmail"></strong>
+      </div>
+    </div>
+
+    <!-- Menu de Navigation -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 30px;">
+      <button class="btn btn-primary" onclick="showSection('accueil')">Accueil</button>
+      <button class="btn btn-primary" onclick="showSection('produits')">Produits</button>
+      <button class="btn btn-primary" onclick="showSection('stats')">Statistiques</button>
+      <button class="btn btn-primary" onclick="showSection('commandes')">Commandes</button>
+      <button class="btn btn-primary" onclick="showSection('configuration')">Configuration</button>
+    </div>
+
+    <!-- Section Accueil -->
+    <div id="accueil" class="section active">
+      <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <h2>Bienvenue dans le panneau admin</h2>
+        <p>Vous êtes maintenant connecté en tant qu'administrateur de VerAccessoire.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div class="card">
+          <h3>� Produits</h3>
+          <p>Ajouter, modifier ou supprimer des articles</p>
+          <button class="btn btn-primary" onclick="showSection('produits')">Gérer</button>
+        </div>
+
+        <div class="card">
+          <h3>�📊 Statistiques</h3>
+          <p>Consultez les statistiques du site</p>
+          <button class="btn btn-primary" onclick="showSection('stats')">Voir</button>
+        </div>
+
+        <div class="card">
+          <h3>📦 Commandes</h3>
+          <p>Gérer les commandes des clients</p>
+          <button class="btn btn-primary" onclick="showSection('commandes')">Voir</button>
+        </div>
+
+        <div class="card">
+          <h3>⚙️ Configuration</h3>
+          <p>Paramètres du site et identifiants</p>
+          <button class="btn btn-primary" onclick="showSection('configuration')">Configurer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Produits -->
+    <div id="produits" class="section">
+      <h2>Gestion des Produits</h2>
+      
+      <div class="card">
+        <h3>Ajouter un nouveau produit</h3>
+        <div id="productMessage" class="message"></div>
+        
+        <form id="addProductForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="productName">Nom du produit *</label>
+              <input type="text" id="productName" required>
+            </div>
+
+            <div class="form-group">
+              <label for="productPrice">Prix (FCFA) *</label>
+              <input type="number" id="productPrice" required min="0" step="100">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="productDescription">Description</label>
+            <textarea id="productDescription" rows="3" placeholder="Description du produit"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="productCategory">Catégorie</label>
+              <select id="productCategory" class="form-group-select">
+                <option value="classiques">Classiques</option>
+                <option value="modernes">Modernes</option>
+                <option value="solaires">Solaires</option>
+                <option value="autres">Autres</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="productStock">Stock</label>
+              <input type="number" id="productStock" value="10" min="0">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="productImage">URL de l'image (optionnel)</label>
+              <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+            </div>
+
+            <div class="form-group">
+              <label for="productImageFile">Ou télécharger une image</label>
+              <input type="file" id="productImageFile" accept="image/*">
+            </div>
+          </div>
+
+          <div id="imagePreview" style="margin: 15px 0; display: none;">
+            <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Aperçu de l'image:</p>
+            <img id="previewImg" src="" alt="Aperçu" style="max-width: 150px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Ajouter le produit</button>
+        </form>
+      </div>
+
+      <h3 style="margin-top: 30px; margin-bottom: 15px;">Liste des produits</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Prix</th>
+            <th>Catégorie</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productsTable">
+          <tr>
+            <td colspan="6" style="text-align: center; color: #999;">Aucun produit pour le moment</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section Statistiques -->
+    <div id="stats" class="section">
+      <h2>Statistiques</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="card" style="text-align: center;">
+          <h3>👥 Clients</h3>
+          <p style="font-size: 32px; color: var(--color-primary); margin: 10px 0;">500+</p>
+          <p style="color: #666;">Clients enregistrés</p>
+        </div>
+
+        <div class="card" style="text-align: center;">
+          <h3>📦 Commandes</h3>
+          <p style="font-size: 32px; color: var(--color-primary); margin: 10px 0;" id="orderCount">0</p>
+          <p style="color: #666;">Commandes totales</p>
+        </div>
+
+        <div class="card" style="text-align: center;">
+          <h3>💰 Ventes</h3>
+          <p style="font-size: 32px; color: var(--color-primary); margin: 10px 0;" id="totalSales">0 FCFA</p>
+          <p style="color: #666;">Chiffre d'affaires</p>
+        </div>
+
+        <div class="card" style="text-align: center;">
+          <h3>👓 Produits</h3>
+          <p style="font-size: 32px; color: var(--color-primary); margin: 10px 0;">100+</p>
+          <p style="color: #666;">Produits disponibles</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Commandes -->
+    <div id="commandes" class="section">
+      <h2>Commandes</h2>
+      
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID Commande</th>
+            <th>Client</th>
+            <th>Date</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="commandesTable">
+          <tr>
+            <td colspan="6" style="text-align: center; color: #999;">Aucune commande pour le moment</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section Configuration -->
+    <div id="configuration" class="section">
+      <h2>Configuration du Site</h2>
+      
+      <div class="card">
+        <h3>Identifiants Admin</h3>
+        <div id="configMessage" class="message"></div>
+        
+        <form id="configForm">
+          <div class="form-group">
+            <label for="adminEmail">Email Admin:</label>
+            <input type="email" id="adminEmail" required>
+          </div>
+
+          <div class="form-group">
+            <label for="adminPassword">Mot de passe Admin:</label>
+            <input type="password" id="adminPassword" required>
+          </div>
+
+          <h3 style="margin-top: 20px;">Réseaux Sociaux</h3>
+
+          <div class="form-group">
+            <label for="facebookUrl">URL Facebook:</label>
+            <input type="url" id="facebookUrl" placeholder="https://facebook.com/...">
+          </div>
+
+          <div class="form-group">
+            <label for="instagramUrl">URL Instagram:</label>
+            <input type="url" id="instagramUrl" placeholder="https://instagram.com/...">
+          </div>
+
+          <div class="form-group">
+            <label for="whatsappUrl">URL WhatsApp:</label>
+            <input type="url" id="whatsappUrl" placeholder="https://wa.me/...">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Enregistrer la Configuration</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-section">
+        <h3>À propos</h3>
+        <ul>
+          <li><a href="about.html">À propos de nous</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Retours</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="legal.html#conditions">Conditions</a></li>
+          <li><a href="legal.html#confidentialite">Confidentialité</a></li>
+          <li><a href="legal.html#cookies">Cookies</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="#" id="facebookLink">Facebook</a></li>
+          <li><a href="#" id="instagramLink">Instagram</a></li>
+          <li><a href="#" id="whatsappLink">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VerAccessoire. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/bootstrap.js"></script>
+  <script>
+    // Afficher/masquer les sections
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    // Vérifier l'authentification
+    function checkAuth() {
+      const adminUser = localStorage.getItem('adminUser');
+
+      if (!adminUser) {
+        window.location.replace('admin-login.html');
+        return false;
+      }
+
+      try {
+        const userData = JSON.parse(adminUser);
+        if (userData.role !== 'admin') {
+          localStorage.removeItem('adminUser');
+          window.location.replace('admin-login.html');
+          return false;
+        }
+
+        document.getElementById('userEmail').textContent = userData.email;
+        return true;
+      } catch (err) {
+        console.error('Erreur parsing adminUser:', err);
+        localStorage.removeItem('adminUser');
+        window.location.replace('admin-login.html');
+        return false;
+      }
+    }
+
+    // Charger la configuration
+    function loadConfig() {
+      const saved = localStorage.getItem('siteConfig');
+      if (saved) {
+        try {
+          const config = JSON.parse(saved);
+          document.getElementById('adminEmail').value = config.adminEmail || 'admin@example.com';
+          document.getElementById('adminPassword').value = config.adminPassword || 'admin123';
+          document.getElementById('facebookUrl').value = config.social?.facebook || '';
+          document.getElementById('instagramUrl').value = config.social?.instagram || '';
+          document.getElementById('whatsappUrl').value = config.social?.whatsapp || '';
+        } catch (err) {
+          console.error('Erreur chargement config:', err);
+        }
+      }
+    }
+
+    // Enregistrer la configuration
+    document.getElementById('configForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const config = {
+        adminEmail: document.getElementById('adminEmail').value,
+        adminPassword: document.getElementById('adminPassword').value,
+        social: {
+          facebook: document.getElementById('facebookUrl').value,
+          instagram: document.getElementById('instagramUrl').value,
+          whatsapp: document.getElementById('whatsappUrl').value
+        },
+        siteName: 'VerAccessoire',
+        tagline: 'Le chic à portée de clic'
+      };
+
+      localStorage.setItem('siteConfig', JSON.stringify(config));
+      
+      const msg = document.getElementById('configMessage');
+      msg.textContent = '✓ Configuration enregistrée avec succès!';
+      msg.className = 'message success';
+      
+      setTimeout(() => {
+        msg.className = 'message';
+      }, 3000);
+    });
+
+    // Charger les commandes
+    function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const tableBody = document.getElementById('commandesTable');
+      
+      if (orders.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Aucune commande pour le moment</td></tr>';
+        document.getElementById('orderCount').textContent = '0';
+        document.getElementById('totalSales').textContent = '0 FCFA';
+        return;
+      }
+
+      tableBody.innerHTML = orders.map(order => `
+        <tr>
+          <td>#${order.id}</td>
+          <td>${order.clientEmail || 'Client'}</td>
+          <td>${new Date(order.date).toLocaleDateString('fr-FR')}</td>
+          <td>${order.total}€</td>
+          <td>${order.status || 'En attente'}</td>
+          <td><button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Voir</button></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('orderCount').textContent = orders.length;
+      document.getElementById('totalSales').textContent = orders.reduce((sum, o) => sum + (o.total || 0), 0) + ' FCFA';
+    }
+
+    // Déconnexion
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
+        localStorage.removeItem('adminUser');
+        window.location.href = '../index.html';
+      }
+    });
+
+    // Charger et afficher les produits
+    function loadProducts() {
+      const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+      const tableBody = document.getElementById('productsTable');
+      
+      if (products.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Aucun produit pour le moment</td></tr>';
+        return;
+      }
+
+      tableBody.innerHTML = products.map(product => `
+        <tr>
+          <td>#${product.id}</td>
+          <td>${product.name}</td>
+          <td>${product.price} FCFA</td>
+          <td>${product.category || 'autres'}</td>
+          <td>${product.stock || 0}</td>
+          <td>
+            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" onclick="editProduct(${product.id})">Éditer</button>
+            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; background: #dc3545;" onclick="deleteProduct(${product.id})">Supprimer</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Ajouter un produit
+    document.getElementById('addProductForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const imageFile = document.getElementById('productImageFile').files[0];
+      const imageUrl = document.getElementById('productImage').value;
+      const form = document.getElementById('addProductForm');
+      const editingId = form.dataset.editingProductId;
+      
+      // Vérifier qu'au moins une image est fournie (sauf en modification si pas de nouvelle image)
+      if (!imageFile && !imageUrl && !editingId) {
+        const msg = document.getElementById('productMessage');
+        msg.textContent = '⚠️ Veuillez fournir une URL ou télécharger une image';
+        msg.className = 'message error';
+        setTimeout(() => { msg.className = 'message'; }, 3000);
+        return;
+      }
+
+      const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+      
+      // Si on édite et qu'on n'a pas de nouvelle image, récupérer l'image existante
+      let imageData = imageUrl;
+      if (editingId && !imageFile && !imageUrl) {
+        const existing = products.find(p => p.id === parseInt(editingId));
+        if (existing) {
+          imageData = existing.image_url || existing.image;
+        }
+      }
+      
+      const newProduct = {
+        name: document.getElementById('productName').value,
+        price: parseFloat(document.getElementById('productPrice').value),
+        description: document.getElementById('productDescription').value,
+        category: document.getElementById('productCategory').value,
+        stock: parseInt(document.getElementById('productStock').value),
+        image: imageData
+      };
+
+      // Si une image est téléchargée, la convertir en base64
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          newProduct.image = event.target.result; // Image en base64
+          newProduct.image_name = imageFile.name;
+          saveProduct(newProduct);
+        };
+        reader.readAsDataURL(imageFile);
+      } else {
+        saveProduct(newProduct);
+      }
+    });
+
+    // Fonction pour sauvegarder le produit (ajout ou modification)
+    function saveProduct(product) {
+      const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+      const form = document.getElementById('addProductForm');
+      const editingId = form.dataset.editingProductId;
+      
+      if (editingId) {
+        // Mode modification
+        const index = products.findIndex(p => p.id === parseInt(editingId));
+        if (index !== -1) {
+          // Garder l'ID original et mettre à jour les données
+          product.id = products[index].id;
+          products[index] = product;
+          
+          const msg = document.getElementById('productMessage');
+          msg.textContent = '✓ Produit modifié avec succès!';
+          msg.className = 'message success';
+          
+          // Réinitialiser le formulaire
+          delete form.dataset.editingProductId;
+          form.reset();
+          form.querySelector('button[type="submit"]').textContent = 'Ajouter le produit';
+          
+          setTimeout(() => { msg.className = 'message'; }, 3000);
+        }
+      } else {
+        // Mode ajout
+        product.id = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+        products.push(product);
+        
+        const msg = document.getElementById('productMessage');
+        msg.textContent = '✓ Produit ajouté avec succès!';
+        msg.className = 'message success';
+        
+        document.getElementById('addProductForm').reset();
+        setTimeout(() => { msg.className = 'message'; }, 3000);
+      }
+      
+      localStorage.setItem('adminProducts', JSON.stringify(products));
+      displayProducts();
+      
+      // Réinitialiser le formulaire
+      document.getElementById('addProductForm').reset();
+      document.getElementById('imagePreview').style.display = 'none';
+      
+      // Recharger la liste
+      loadProducts();
+      
+      setTimeout(() => {
+        msg.className = 'message';
+      }, 3000);
+    }
+
+    // Aperçu de l'image téléchargée
+    document.getElementById('productImageFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('previewImg').src = event.target.result;
+          document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Supprimer un produit
+    function deleteProduct(productId) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
+        let products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+        products = products.filter(p => p.id !== productId);
+        localStorage.setItem('adminProducts', JSON.stringify(products));
+        loadProducts();
+      }
+    }
+
+    // Éditer un produit
+    function editProduct(productId) {
+      const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+      const product = products.find(p => p.id === productId);
+      
+      if (!product) {
+        alert('Produit non trouvé!');
+        return;
+      }
+
+      // Remplir le formulaire avec les données du produit
+      document.getElementById('productName').value = product.name || '';
+      document.getElementById('productPrice').value = product.price || '';
+      document.getElementById('productDescription').value = product.description || '';
+      document.getElementById('productStock').value = product.stock || 0;
+      
+      // Ajouter un data attribute pour tracker quel produit on édite
+      document.getElementById('addProductForm').dataset.editingProductId = productId;
+      
+      // Changer le bouton
+      const btn = document.querySelector('#addProductForm button[type="submit"]');
+      btn.textContent = 'Mettre à jour le produit';
+      
+      // Scroll au formulaire
+      document.getElementById('addProductForm').scrollIntoView({ behavior: 'smooth' });
+      alert('Formulaire rempli avec les données de: ' + product.name);
+    }
+
+    // Charger les liens sociaux
+    function loadSocialLinks() {
+      const saved = localStorage.getItem('siteConfig');
+      if (saved) {
+        try {
+          const config = JSON.parse(saved);
+          if (config.social?.facebook) document.getElementById('facebookLink').href = config.social.facebook;
+          if (config.social?.instagram) document.getElementById('instagramLink').href = config.social.instagram;
+          if (config.social?.whatsapp) document.getElementById('whatsappLink').href = config.social.whatsapp;
+        } catch (err) {
+          console.error('Erreur chargement liens sociaux:', err);
+        }
+      }
+    }
+
+    // Initialiser le tableau de bord
+    if (checkAuth()) {
+      loadConfig();
+      loadOrders();
+      loadProducts();
+      loadSocialLinks();
+    }
+  </script>
+</body>
+</html>

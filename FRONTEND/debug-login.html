@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Login - VerAccessoire</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      display: none;
+      font-weight: bold;
+    }
+    .error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    .success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .debug {
+      background: #e7e7e7;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #999;
+      min-height: 200px;
+    }
+    .debug-line {
+      margin: 3px 0;
+      padding: 2px 0;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Debug Login</h1>
+    
+    <div class="form-group">
+      <label>Email:</label>
+      <input type="email" id="email" value="admin@veraccessoire.com">
+    </div>
+    
+    <div class="form-group">
+      <label>Mot de passe:</label>
+      <input type="password" id="password" value="admin123">
+    </div>
+    
+    <button onclick="testLogin()">🚀 Tester Login</button>
+    
+    <div id="message" class="message"></div>
+    
+    <div class="debug" id="debugLog">
+      <!-- Les logs s'affichent ici -->
+    </div>
+  </div>
+
+  <script>
+    console.log('✅ Script chargé');
+    
+    function log(message) {
+      const debugLog = document.getElementById('debugLog');
+      if (!debugLog) {
+        console.log('❌ ERREUR: Element debugLog non trouvé');
+        return;
+      }
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.className = 'debug-line';
+      line.textContent = `[${timestamp}] ${message}`;
+      debugLog.appendChild(line);
+      
+      // Scroll vers le bas
+      debugLog.scrollTop = debugLog.scrollHeight;
+      
+      console.log(message);
+    }
+
+    function showMessage(text, type) {
+      const msgDiv = document.getElementById('message');
+      msgDiv.textContent = text;
+      msgDiv.className = `message ${type}`;
+      msgDiv.style.display = 'block';
+    }
+
+    async function testLogin() {
+      log('========================================');
+      log('🚀 DÉBUT DU TEST LOGIN');
+      log('========================================');
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      log(`📧 Email: ${email}`);
+      log(`🔑 Password: ${password.length} caractères`);
+      
+      if (!email || !password) {
+        log('❌ ERREUR: Email ou mot de passe vide');
+        showMessage('❌ Remplissez tous les champs', 'error');
+        return;
+      }
+
+      try {
+        log('');
+        log('📡 ÉTAPE 1: Préparation requête');
+        log('URL: http://localhost:5000/api/auth/login');
+        log('Method: POST');
+        log('Headers: Content-Type: application/json');
+        log(`Body: {"email":"${email}","password":"..."}}`);
+        
+        log('');
+        log('⏳ Envoi de la requête...');
+        
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        log('');
+        log('📡 ÉTAPE 2: Réponse reçue');
+        log(`Status: ${response.status} ${response.statusText}`);
+        
+        const data = await response.json();
+        log(`Content-Type: ${response.headers.get('content-type')}`);
+        
+        log('');
+        log('📦 ÉTAPE 3: Parsing JSON');
+        log(`Data: ${JSON.stringify(data).substring(0, 100)}...`);
+        
+        if (response.ok && data.access_token) {
+          log('');
+          log('✅ ========== LOGIN RÉUSSI! ==========');
+          log(`✅ Token: ${data.access_token.substring(0, 30)}...`);
+          log(`✅ User ID: ${data.user.id}`);
+          log(`✅ Email: ${data.user.email}`);
+          log(`✅ Name: ${data.user.name}`);
+          log(`✅ Is Admin: ${data.user.is_admin}`);
+          
+          log('');
+          log('💾 ÉTAPE 4: Sauvegarde LocalStorage');
+          localStorage.setItem('access_token', data.access_token);
+          localStorage.setItem('user_id', data.user.id);
+          localStorage.setItem('is_admin', data.user.is_admin);
+          localStorage.setItem('user_email', data.user.email);
+          log('✅ LocalStorage mis à jour');
+          
+          showMessage(`✅ Connexion réussie! Redirection en 2s...`, 'success');
+          
+          log('');
+          log('🔀 ÉTAPE 5: Redirection');
+          const redirectUrl = data.user.is_admin ? './admin.html' : './shop.html';
+          log(`URL cible: ${redirectUrl}`);
+          log('⏱️  Attente 2 secondes...');
+          
+          setTimeout(() => {
+            log('Redirection...');
+            window.location.href = redirectUrl;
+          }, 2000);
+        } else {
+          log('');
+          log('❌ ========== LOGIN ÉCHOUÉ ==========');
+          log(`❌ Error: ${data.error}`);
+          showMessage(`❌ ${data.error}`, 'error');
+        }
+      } catch (error) {
+        log('');
+        log('❌ ========== EXCEPTION ==========');
+        log(`❌ Message: ${error.message}`);
+        log(`❌ Name: ${error.name}`);
+        log(`❌ Stack: ${error.stack}`);
+        showMessage(`❌ Erreur: ${error.message}`, 'error');
+      }
+    }
+
+    // Initialisation
+    window.addEventListener('load', function() {
+      log('✅ Page complètement chargée');
+      log('Cliquez sur "🚀 Tester Login" pour commencer...');
+      log('');
+    });
+  </script>
+</body>
+</html>

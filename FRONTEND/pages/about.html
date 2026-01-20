@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>À propos | VerAccessoire</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <a href="../index.html" class="logo">👓 VerAccessoire</a>
+        <p class="tagline">Le chic à portée de clic</p>
+      </div>
+      <nav class="nav">
+        <a href="../index.html">Accueil</a>
+        <a href="shop.html">Boutique</a>
+        <a href="about.html" class="active">À propos</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-icons">
+        <button class="icon-btn" id="cartBtn" title="Panier" style="position: relative;">
+          🛒 <span class="cart-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; min-width: 24px; line-height: 24px; text-align: center;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container" style="padding: 40px 20px;">
+    <h1>À propos de VerAccessoire</h1>
+    <p>Bienvenue chez VerAccessoire, votre destination privilégiée pour découvrir les lunettes les plus tendance et élégantes du moment.</p>
+    
+    <h2>Notre Mission</h2>
+    <p>Nous nous engageons à offrir des lunettes de qualité supérieure qui allient style, confort et durabilité. Chaque paire est sélectionnée avec soin pour répondre aux attentes des clients les plus exigeants.</p>
+    
+    <h2>Pourquoi Nous Choisir?</h2>
+    <ul>
+      <li>Une large collection de lunettes tendance pour tous les styles</li>
+      <li>Qualité garantie et matériaux premium</li>
+      <li>Service client disponible 24/7</li>
+      <li>Livraison rapide et sécurisée</li>
+      <li>Garantie satisfait ou remboursé</li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-section">
+        <h3>À propos</h3>
+        <ul>
+          <li><a href="about.html">À propos de nous</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Retours</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="legal.html#conditions">Conditions</a></li>
+          <li><a href="legal.html#confidentialite">Confidentialité</a></li>
+          <li><a href="legal.html#cookies">Cookies</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="#" id="facebookLink">Facebook</a></li>
+          <li><a href="#" id="instagramLink">Instagram</a></li>
+          <li><a href="#" id="whatsappLink">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VerAccessoire. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/bootstrap.js"></script>
+  <script src="../js/cart-badge.js"></script>
+  <script>
+    function loadSocialLinks() {
+      const saved = localStorage.getItem('siteConfig');
+      if (saved) {
+        const config = JSON.parse(saved);
+        if (config.social?.facebook) document.getElementById('facebookLink').href = config.social.facebook;
+        if (config.social?.instagram) document.getElementById('instagramLink').href = config.social.instagram;
+        if (config.social?.whatsapp) document.getElementById('whatsappLink').href = config.social.whatsapp;
+      }
+    }
+    loadSocialLinks();
+    document.getElementById('cartBtn').addEventListener('click', () => {
+      window.location.href = 'cart.html';
+    });
+  </script>
+</body>
+</html>

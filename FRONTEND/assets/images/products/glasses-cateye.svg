@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120">
+  <!-- Cat eye style frame left -->
+  <path d="M 25 50 L 55 35 L 60 75 L 40 80 Z" fill="none" stroke="#ff1493" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Cat eye style frame right -->
+  <path d="M 145 50 L 175 35 L 180 75 L 160 80 Z" fill="none" stroke="#ff1493" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Bridge -->
+  <line x1="60" y1="65" x2="145" y2="65" stroke="#ff1493" stroke-width="3"/>
+  <!-- Left lens -->
+  <ellipse cx="45" cy="60" rx="20" ry="22" fill="#ffb6c1" opacity="0.5"/>
+  <!-- Right lens -->
+  <ellipse cx="160" cy="60" rx="20" ry="22" fill="#ffb6c1" opacity="0.5"/>
+  <!-- Left temple -->
+  <path d="M 40 80 Q 30 95 25 110" stroke="#ff1493" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Right temple -->
+  <path d="M 160 80 Q 170 95 175 110" stroke="#ff1493" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>
