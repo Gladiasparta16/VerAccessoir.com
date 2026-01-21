@@ -172,7 +172,8 @@
       }
       
       localStorage.setItem('cart', JSON.stringify(cart));
-      cartManager.updateCart();
+      if (window.cartManager && typeof window.cartManager.updateCart === 'function') window.cartManager.updateCart();
+      if (typeof updateCartBadge === 'function') updateCartBadge();
       alert(`${name} ajouté au panier!`);
     }
 
