@@ -1,0 +1,23 @@
+Bonjour,
+
+Tu trouveras en pièce jointe une copie du projet `verraaccessoire` prête pour les tests locaux.
+
+Instructions rapides:
+1) Dézipper le projet
+2) Ouvrir `BACKEND/.env.example`, créer `BACKEND/.env` en remplaçant les valeurs par des secrets locaux
+3) Créer et activer un environnement Python, installer les dépendances:
+   - `python -m venv venv` (Windows)
+   - `.
+\venv\Scripts\Activate.ps1`
+   - `cd BACKEND && pip install -r requirements.txt`
+4) Initialiser la base: `python init_db.py`
+5) Lancer: `python app.py` puis ouvrir http://localhost:5000
+
+Remarques de sécurité:
+- Le fichier `.env` n'est pas inclus; merci de créer ton propre fichier à partir de `.env.example` et de ne pas le partager.
+- Les endpoints de test ont été retirés de l'enregistrement automatique.
+
+Merci pour les tests — dis-moi les retours.
+
+Cordialement,
+Ton collègue

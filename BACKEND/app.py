@@ -120,16 +120,11 @@ from routes.products import products_bp
 from routes.auth import auth_bp
 from routes.orders import orders_bp
 from routes.admin import admin_bp
-from routes.security_test import security_test_bp  # ⚠️ À RETIRER EN PRODUCTION
 
 app.register_blueprint(products_bp, url_prefix="/api/products")
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(orders_bp, url_prefix="/api/orders")
 app.register_blueprint(admin_bp, url_prefix="/api/admin")
-
-# ⚠️ À RETIRER EN PRODUCTION
-if app.debug:
-    app.register_blueprint(security_test_bp, url_prefix="/api/security-test")
 
 
 # =================== ROUTES API ===================
