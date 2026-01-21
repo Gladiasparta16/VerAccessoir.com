@@ -1,0 +1,13 @@
+"""
+Archive of security test endpoints — DISABLED
+
+This file contains security test routes that were useful for local testing.
+They are intentionally disabled (renamed to `.disabled`) so they are not
+imported or registered by the application in any environment.
+
+If you need to re-enable these tests for local development, restore the
+original file name and ensure `app.py` does NOT register the blueprint
+on production branches.
+"""
+
+# Original test routes archived. Do not import this file.
