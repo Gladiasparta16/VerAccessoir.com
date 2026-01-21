@@ -2,6 +2,8 @@
 
 # Fichiers de configuration sensibles
 .env
+# Backend local env (do not commit real secrets)
+BACKEND/.env
 .env.local
 .env.*.local
 
