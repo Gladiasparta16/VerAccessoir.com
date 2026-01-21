@@ -1,5 +1,6 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
+// Use `window.API_BASE_URL` when provided by hosting env, else default to current origin
+const API_BASE_URL = (window.API_BASE_URL || (window.location.origin + '/api'));
 
 class APIClient {
   static async request(endpoint, options = {}) {
@@ -121,7 +122,8 @@ class APIClient {
   }
 }
 // API Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
+// Use `window.API_BASE_URL` when provided by hosting env, else default to current origin
+const API_BASE_URL = (window.API_BASE_URL || (window.location.origin + '/api'));
 
 class APIClient {
   static async request(endpoint, options = {}) {
