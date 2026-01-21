@@ -39,26 +39,25 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 @app.after_request
 def set_security_headers(response):
     """Ajouter les headers de sécurité à chaque réponse"""
-    response.headers["X-Frame-Options"] = "DENY"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-XSS-Protection"] = "1; mode=block"
-    # Note: allow 'unsafe-inline' for scripts during local development
-    response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline'; "
-        "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: https:; "
-        "font-src 'self'; "
-        "connect-src 'self'"
-    )
-    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    # Use headers defined in configuration so they can be changed from .env
+    sec = app.config.get("SECURITY_HEADERS", {})
+    # Apply configured headers
+    for k, v in sec.items():
+        try:
+            response.headers[k] = v
+        except Exception:
+            pass
+
+    # Additional runtime headers
     response.headers["Permissions-Policy"] = (
         "geolocation=(), microphone=(), camera=(), payment=()"
     )
+
     if not app.debug:
         response.headers["Strict-Transport-Security"] = (
             "max-age=31536000; includeSubDomains"
         )
+
     return response
 
 
@@ -231,4 +230,5 @@ with app.app_context():
 
 # =================== DÉMARRAGE ===================
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # Respect the DEBUG flag from configuration (set FLASK_DEBUG in .env for local overrides)
+    app.run(debug=app.config.get("DEBUG", False), host="0.0.0.0", port=5000)

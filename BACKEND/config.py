@@ -25,6 +25,9 @@ class Config:
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", SECRET_KEY)
     JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 heure
 
+    # DEBUG mode (useful for local override)
+    DEBUG = os.environ.get("FLASK_DEBUG", "False").lower() in ("1", "true", "yes")
+
     # Session
     SESSION_COOKIE_SECURE = True  # HTTPS only
     SESSION_COOKIE_HTTPONLY = True  # Pas d'accès JavaScript
@@ -39,11 +42,12 @@ class Config:
     # Rate limiting
     RATELIMIT_STORAGE_URL = "memory://"
 
-    # Security headers
+    # Security headers (can be overridden via environment in .env)
+    # connect-src includes https: to allow frontends hosted on HTTPS-only platforms
     SECURITY_HEADERS = {
         "X-Frame-Options": "DENY",
         "X-Content-Type-Options": "nosniff",
         "X-XSS-Protection": "1; mode=block",
         "Referrer-Policy": "strict-origin-when-cross-origin",
-        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https:",
     }
