@@ -1,6 +1,7 @@
 from app import app
 from models import db, User, Product, Order, OrderItem
 from werkzeug.security import generate_password_hash
+import os
 
 with app.app_context():
     db.create_all()
@@ -95,28 +96,38 @@ with app.app_context():
         db.session.commit()
         print(f"✓ {len(products)} produits ajoutés")
 
-    # Créer utilisateur admin de test
-    if User.query.filter_by(email="admin@veraccessoire.com").first() is None:
-        admin = User(
-            email="admin@veraccessoire.com",
-            password=generate_password_hash("admin123"),
-            name="Administrateur",
-            is_admin=True,
-        )
-        db.session.add(admin)
-        db.session.commit()
-        print("✓ Administrateur créé: admin@veraccessoire.com / admin123")
+    # Optional: create initial admin account only if specified via environment
+    admin_email = os.environ.get("INITIAL_ADMIN_EMAIL")
+    admin_password = os.environ.get("INITIAL_ADMIN_PASSWORD")
+    if admin_email and admin_password:
+        if User.query.filter_by(email=admin_email).first() is None:
+            admin = User(
+                email=admin_email,
+                password=generate_password_hash(admin_password),
+                name="Administrateur",
+                is_admin=True,
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print(f"✓ Administrateur créé: {admin_email} (from env)")
+    else:
+        print("Info: INITIAL_ADMIN_EMAIL not set — skipping creation of default admin.")
 
-    # Créer utilisateur client de test
-    if User.query.filter_by(email="test@example.com").first() is None:
-        user = User(
-            email="test@example.com",
-            password=generate_password_hash("test123"),
-            name="Client Test",
-            is_admin=False,
-        )
-        db.session.add(user)
-        db.session.commit()
-        print("✓ Utilisateur créé: test@example.com / test123")
+    # Optional: create test user only if environment requests it
+    test_user_email = os.environ.get("INITIAL_TEST_USER_EMAIL")
+    test_user_password = os.environ.get("INITIAL_TEST_USER_PASSWORD")
+    if test_user_email and test_user_password:
+        if User.query.filter_by(email=test_user_email).first() is None:
+            user = User(
+                email=test_user_email,
+                password=generate_password_hash(test_user_password),
+                name="Client Test",
+                is_admin=False,
+            )
+            db.session.add(user)
+            db.session.commit()
+            print(f"✓ Utilisateur créé: {test_user_email} (from env)")
+    else:
+        print("Info: INITIAL_TEST_USER_EMAIL not set — skipping creation of test user.")
 
     print("\n✓ Base de données initialisée avec succès!")

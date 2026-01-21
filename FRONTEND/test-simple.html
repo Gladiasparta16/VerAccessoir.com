@@ -35,11 +35,18 @@
     async function testLogin() {
       addLog('\n=== Test /api/auth/login ===');
       try {
-        const resp = await fetch('http://localhost:5000/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: 'admin@veraccessoire.com', password: 'admin123' })
-        });
+        // Read test credentials from window.TEST_ADMIN (set by hosting) or prompt the user
+        const creds = window.TEST_ADMIN || {};
+        const body = { email: creds.email || '', password: creds.password || '' };
+        if (!body.email || !body.password) {
+          addLog('No test admin credentials provided (window.TEST_ADMIN) — skipping login.');
+          return;
+        }
+        const resp = await fetch((window.API_BASE_URL || window.location.origin + '/api') + '/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
         addLog('Status: ' + resp.status);
         const data = await resp.json();
         addLog('Data: ' + JSON.stringify(data, null, 2));

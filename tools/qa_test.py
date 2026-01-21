@@ -60,19 +60,24 @@ ok3 = (code == 200)
 results.append(('GET /cart.html', ok3, code))
 print('GET /cart.html ->', code)
 
-# 4. POST admin login
-admin = {'email':'admin@veraccessoire.com', 'password':'admin123'}
-code, body = do_post('/api/auth/login', admin)
-ok4 = (code == 200)
-token_present = False
-try:
-    j = json.loads(body)
-    if isinstance(j, dict) and ('access_token' in j or 'token' in j or 'accessToken' in j):
-        token_present = True
-except Exception:
+# 4. POST admin login (read credentials from env for QA or skip)
+admin_email = os.environ.get('QA_ADMIN_EMAIL')
+admin_password = os.environ.get('QA_ADMIN_PASSWORD')
+if admin_email and admin_password:
+    admin = {'email': admin_email, 'password': admin_password}
+    code, body = do_post('/api/auth/login', admin)
+    ok4 = (code == 200)
     token_present = False
-results.append(('POST /api/auth/login', ok4 and token_present, code))
-print('POST /api/auth/login ->', code, ' token:', token_present)
+    try:
+        j = json.loads(body)
+        if isinstance(j, dict) and ('access_token' in j or 'token' in j or 'accessToken' in j):
+            token_present = True
+    except Exception:
+        token_present = False
+    results.append(('POST /api/auth/login', ok4 and token_present, code))
+    print('POST /api/auth/login ->', code, ' token:', token_present)
+else:
+    print('QA: QA_ADMIN_EMAIL not set — skipping admin login test')
 
 # 5. Optional: try register with random email
 rand = random.randint(1000,9999)

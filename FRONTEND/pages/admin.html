@@ -449,8 +449,8 @@
       if (saved) {
         try {
           const config = JSON.parse(saved);
-          document.getElementById('adminEmail').value = config.adminEmail || 'admin@example.com';
-          document.getElementById('adminPassword').value = config.adminPassword || 'admin123';
+          document.getElementById('adminEmail').value = config.adminEmail || '';
+          document.getElementById('adminPassword').value = config.adminPassword || '';
           document.getElementById('facebookUrl').value = config.social?.facebook || '';
           document.getElementById('instagramUrl').value = config.social?.instagram || '';
           document.getElementById('whatsappUrl').value = config.social?.whatsapp || '';

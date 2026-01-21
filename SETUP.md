@@ -22,10 +22,10 @@ Vérifiez que tout fonctionne :
 3. **Panier (🛒)** → Article apparaît
 4. **S'inscrire** → Créez un compte
 5. **Admin** (http://localhost:5000/pages/admin-login.html)
-   - Email: `admin@example.com`
-   - Mot de passe: `admin123`
-    - Email: `admin@veraccessoire.com`
-    - Mot de passe: `admin123`
+    - NOTE: par sécurité, aucun compte admin par défaut n'est créé.
+    - Pour créer un administrateur initial, définissez les variables d'environnement dans `BACKEND/.env` ou via votre hébergeur:
+      - `INITIAL_ADMIN_EMAIL` et `INITIAL_ADMIN_PASSWORD` (optionnel)
+    - Ou utilisez la fonctionnalité d'administration pour créer un compte via l'interface (si disponible).
 
 ---
 
