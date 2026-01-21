@@ -30,3 +30,17 @@ This folder contains guidance and sample files to deploy the project.
 5) Post-deploy test
    - Visit frontend URL and try adding a product to the cart — badge should update.
    - Check `/api/health` on backend URL.
+
+6) Creating initial admin (recommended secure flow)
+   - Preferred: use `BACKEND/create_admin.py` after the app and DB are deployed.
+     - On the server, run:
+       ```bash
+       python BACKEND/create_admin.py
+       ```
+       The script will prompt for email and password (or read `INITIAL_ADMIN_EMAIL` and `INITIAL_ADMIN_PASSWORD` env vars).
+   - Alternative: set `INITIAL_ADMIN_EMAIL` and `INITIAL_ADMIN_PASSWORD` in your env and run `python BACKEND/init_db.py` once. Then remove those env vars immediately.
+
+7) Mail & password reset
+   - Configure SMTP env vars (see DEPLOY/ENV_VARS.md) so the `/api/auth/forgot` endpoint sends real emails.
+   - If SMTP is not configured, the forgot/reset flow will still work in DEBUG mode and return a token for testing.
+
