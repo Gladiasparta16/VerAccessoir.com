@@ -74,13 +74,13 @@ class CartManager {
 
   updateCartBadge() {
     const cart = this.getCart();
-    const badge = document.querySelector('.cart-badge');
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    if (badge) {
+    // Mettre à jour tous les badges présents sur la page
+    document.querySelectorAll('.cart-badge').forEach(badge => {
       badge.textContent = totalItems;
-      badge.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
+      try { badge.style.display = totalItems > 0 ? 'flex' : 'none'; } catch(e) { /* ignore */ }
+    });
   }
 
   updateCartDisplay() {
@@ -212,6 +212,8 @@ class CartManager {
 
 // Initialiser le gestionnaire de panier
 const cartManager = new CartManager();
+// Exposer l'instance globalement pour les scripts inline/utilitaires
+try { window.cartManager = cartManager; } catch (e) { /* ignore */ }
 // Panier - Cart Manager
 class CartManager {
   constructor() {
