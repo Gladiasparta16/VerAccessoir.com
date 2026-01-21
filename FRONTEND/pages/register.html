@@ -10,11 +10,11 @@
     <!-- Header -->
     <header class="header">
         <div class="container-fluid">
-            <div class="header-content">
-                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                <div class="header-content">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: block; text-align: center;">
                 <h1 class="logo">VerAccessoire 👓</h1>
                 </a>
-                <p style="text-align: center; color: #ff6a00; font-style: italic; font-size: 13px; margin-top: -10px;">Le chic à portée de clic</p>
+                <p style="text-align: center; color: #000; font-style: italic; font-size: 13px; margin-top: 4px; display:block;">Le chic à portée de clic</p>
                 <nav class="nav">
                     <a href="../index.html">Accueil</a>
                     <a href="shop.html">Boutique</a>
@@ -72,9 +72,9 @@
                                 type="password" 
                                 id="password" 
                                 class="form-input" 
-                                placeholder="Minimum 6 caractères" 
+                                placeholder="Minimum 8 caractères, une lettre et un chiffre" 
                                 required
-                                minlength="6"
+                                minlength="8"
                             >
                         </div>
 
@@ -86,7 +86,7 @@
                                 class="form-input" 
                                 placeholder="Confirmez votre mot de passe" 
                                 required
-                                minlength="6"
+                                minlength="8"
                             >
                         </div>
 
@@ -165,18 +165,20 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             // Validation
+            // Vérifier correspondance et complexité côté client (doit matcher la validation serveur)
+            const pwdRegex = /(?=.*[A-Za-z])(?=.*\d).{8,}/;
+
             if (password !== confirmPassword) {
                 showAlert('Les mots de passe ne correspondent pas', 'error');
                 return;
             }
-            
-            if (password.length < 6) {
-                showAlert('Le mot de passe doit avoir au moins 6 caractères', 'error');
+            if (!pwdRegex.test(password)) {
+                showAlert('Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre', 'error');
                 return;
             }
             
             try {
-                const response = await fetch('http://localhost:5000/api/auth/register', {
+                const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

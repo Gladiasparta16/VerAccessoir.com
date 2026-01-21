@@ -98,8 +98,8 @@
         <h3>À propos</h3>
         <ul>
           <li><a href="about.html">À propos de nous</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Carrières</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="careers.html">Carrières</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -136,9 +136,9 @@
   <script src="../js/bootstrap.js"></script>
   <script src="../js/cart-badge.js"></script>
   <script>
-    document.getElementById('adminForm').addEventListener('submit', (e) => {
+    document.getElementById('adminForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const email = document.getElementById('adminEmail').value.trim();
       const password = document.getElementById('adminPassword').value.trim();
       const errorMsg = document.getElementById('adminError');
@@ -150,36 +150,45 @@
       errorMsg.textContent = '';
       successMsg.textContent = '';
 
-      // Identifiants Admin par défaut
-      const DEFAULT_ADMIN_EMAIL = 'admin@veraccessoire.com';
-      const DEFAULT_ADMIN_PASSWORD = 'admin123';
-
       if (!email || !password) {
         errorMsg.textContent = '✗ Veuillez remplir tous les champs';
         errorMsg.style.display = 'block';
         return;
       }
 
-      if (email === DEFAULT_ADMIN_EMAIL && password === DEFAULT_ADMIN_PASSWORD) {
-          // Sauvegarder l'utilisateur admin avec clé spécifique
-          localStorage.setItem('adminUser', JSON.stringify({ 
-            email: email,
-            role: 'admin',
-            loginTime: new Date().toISOString()
-          }));
-          
-          successMsg.textContent = '✓ Connexion réussie! Redirection en cours...';
-          successMsg.style.display = 'block';
-          
-          // Rediriger vers le panel admin (chemin absolu pour fiabilité)
-          setTimeout(() => {
-            window.location.href = '/admin.html';
-          }, 800);
-        } else {
-          errorMsg.textContent = '✗ Email ou mot de passe incorrect';
+      try {
+        const resp = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) {
+          errorMsg.textContent = data.error || '✗ Email ou mot de passe incorrect';
           errorMsg.style.display = 'block';
           document.getElementById('adminPassword').value = '';
+          return;
         }
+
+        // Vérifier que l'utilisateur est admin
+        if (!data.user || !data.user.is_admin) {
+          errorMsg.textContent = '✗ Accès administrateur requis';
+          errorMsg.style.display = 'block';
+          return;
+        }
+
+        // Stocker token et info admin
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('adminUser', JSON.stringify({ email: data.user.email, role: 'admin', id: data.user.id }));
+
+        successMsg.textContent = '✓ Connexion réussie! Redirection en cours...';
+        successMsg.style.display = 'block';
+        setTimeout(() => { window.location.href = '/admin.html'; }, 600);
+      } catch (err) {
+        errorMsg.textContent = 'Erreur serveur: ' + (err.message || err);
+        errorMsg.style.display = 'block';
+      }
     });
 
     function loadSocialLinks() {
