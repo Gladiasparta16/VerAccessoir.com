@@ -6,6 +6,20 @@ Environment variables required for production
 - DATABASE_URL: DB connection string (e.g. Postgres)
 - SENTRY_DSN: optional, for error monitoring
 
+Mail settings (for password reset emails):
+- MAIL_SERVER: e.g. smtp.sendgrid.net or smtp.gmail.com
+- MAIL_PORT: 587
+- MAIL_USERNAME: SMTP username
+- MAIL_PASSWORD: SMTP password
+- MAIL_USE_TLS: True/False
+- MAIL_DEFAULT_SENDER: optional from address
+
+Password reset token expiration:
+- PASSWORD_RESET_TOKEN_EXP: seconds (default 3600)
+
+Frontend origin (optional):
+- FRONTEND_ORIGIN: full URL of frontend (used to build reset links)
+
 Notes:
 - Store secrets in the hosting provider's secret manager (Render / Netlify / Vercel env settings).
 - Never commit `.env` with real secrets.

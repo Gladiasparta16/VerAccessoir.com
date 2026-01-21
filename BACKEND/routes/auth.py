@@ -5,8 +5,48 @@ from models import db, User
 from security_logger import security_logger
 from rate_limiter import rate_limit_manager
 import re
+import os
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+import smtplib
+from email.message import EmailMessage
 
 auth_bp = Blueprint("auth", __name__)
+
+
+def _get_serializer():
+    secret = os.environ.get('SECRET_KEY') or os.environ.get('JWT_SECRET_KEY') or 'dev-secret'
+    return URLSafeTimedSerializer(secret)
+
+
+def _send_reset_email(to_email, reset_link):
+    # If SMTP settings provided, send real email; otherwise log/return
+    mail_server = os.environ.get('MAIL_SERVER')
+    if mail_server:
+        port = int(os.environ.get('MAIL_PORT', 587))
+        username = os.environ.get('MAIL_USERNAME')
+        password = os.environ.get('MAIL_PASSWORD')
+        use_tls = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
+
+        msg = EmailMessage()
+        msg['Subject'] = 'Réinitialisation de votre mot de passe'
+        msg['From'] = os.environ.get('MAIL_DEFAULT_SENDER', username or 'no-reply@example.com')
+        msg['To'] = to_email
+        msg.set_content(f"Pour réinitialiser votre mot de passe, cliquez sur ce lien:\n\n{reset_link}\n\nSi vous n'avez pas demandé cela, ignorez ce message.")
+
+        try:
+            with smtplib.SMTP(mail_server, port, timeout=10) as s:
+                if use_tls:
+                    s.starttls()
+                if username and password:
+                    s.login(username, password)
+                s.send_message(msg)
+            return True, None
+        except Exception as e:
+            return False, str(e)
+    else:
+        # No mail configured; return token for dev/debug use (only safe when debug)
+        return False, 'MAIL_NOT_CONFIGURED'
+
 
 
 # =================== VALIDATION MOTS DE PASSE ===================
@@ -169,3 +209,74 @@ def get_current_user():
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# =================== FORGOT / RESET PASSWORD ===================
+@auth_bp.route('/forgot', methods=['POST'])
+def forgot_password():
+    try:
+        data = request.get_json() or {}
+        email = data.get('email')
+        if not email:
+            return jsonify({'error': 'Email requis'}), 400
+
+        user = User.query.filter_by(email=email).first()
+
+        # Always respond with 200 to avoid account enumeration
+        if not user:
+            return jsonify({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'}), 200
+
+        s = _get_serializer()
+        token = s.dumps({'user_id': user.id})
+        # Build reset link pointing to frontend reset page
+        frontend_origin = os.environ.get('FRONTEND_ORIGIN') or ''
+        if frontend_origin:
+            reset_link = f"{frontend_origin}/reset-password.html?token={token}"
+        else:
+            reset_link = f"/reset-password.html?token={token}"
+
+        sent, err = _send_reset_email(user.email, reset_link)
+        if sent:
+            return jsonify({'message': 'Lien de réinitialisation envoyé'}), 200
+        else:
+            # If mail not configured, in debug return token so dev can test
+            if os.environ.get('FLASK_DEBUG', 'False').lower() in ('1','true','yes'):
+                return jsonify({'message': 'DEBUG: mail non configuré', 'token': token}), 200
+            return jsonify({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Erreur interne'}), 500
+
+
+@auth_bp.route('/reset', methods=['POST'])
+def reset_password():
+    try:
+        data = request.get_json() or {}
+        token = data.get('token')
+        new_password = data.get('password')
+        if not token or not new_password:
+            return jsonify({'error': 'Token et nouveau mot de passe requis'}), 400
+
+        # validate password complexity
+        ok, msg = validate_password(new_password)
+        if not ok:
+            return jsonify({'error': f'Mot de passe invalide: {msg}'}), 400
+
+        s = _get_serializer()
+        try:
+            payload = s.loads(token, max_age=int(os.environ.get('PASSWORD_RESET_TOKEN_EXP', 3600)))
+        except SignatureExpired:
+            return jsonify({'error': 'Token expiré'}), 400
+        except BadSignature:
+            return jsonify({'error': 'Token invalide'}), 400
+
+        user_id = payload.get('user_id')
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+        user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        db.session.commit()
+        return jsonify({'message': 'Mot de passe réinitialisé avec succès'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Erreur interne'}), 500
