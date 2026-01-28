@@ -111,7 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.querySelector('.products');
   if (!container) return;
   productManager.loadProducts().then(() => {
-    productManager.renderProducts(container);
+    // If the products container is inside a featured section (homepage), render compact tiles
+    const compact = !!container.closest('.featured');
+    productManager.renderProducts(container, undefined, { compact });
     // ensure cart badge is updated if cartManager exists
     try { if (window.cartManager) window.cartManager.updateCart(); } catch (e) { /* ignore */ }
   });
