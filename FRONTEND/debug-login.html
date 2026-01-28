@@ -162,7 +162,7 @@
       try {
         log('');
         log('📡 ÉTAPE 1: Préparation requête');
-        log('URL: http://localhost:5000/api/auth/login');
+        log('URL: /api/auth/login');
         log('Method: POST');
         log('Headers: Content-Type: application/json');
         log(`Body: {"email":"${email}","password":"..."}}`);
@@ -170,7 +170,7 @@
         log('');
         log('⏳ Envoi de la requête...');
         
-        const response = await fetch('http://localhost:5000/api/auth/login', {
+        const response = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
