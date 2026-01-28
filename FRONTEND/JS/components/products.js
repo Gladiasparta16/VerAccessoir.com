@@ -65,7 +65,7 @@ class ProductManager {
     container.innerHTML = products
       .map(
         product => `
-      <div class="product-card ${compact ? 'compact' : ''}">
+      <div class="product-card ${compact ? 'compact' : ''}" data-category="${product.category || ''}">
         <img src="${product.image_url || product.image || 'https://via.placeholder.com/300x300?text=Produit'}" alt="${product.name}" class="product-image">
         <div class="product-content">
           <h4 class="product-title">${product.name}</h4>
@@ -83,32 +83,7 @@ class ProductManager {
       )
       .join('');
 
-    // Bind direct click handlers to buttons to ensure add-to-cart works across environments
-    try {
-      container.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const t = e.currentTarget;
-          const id = String(t.dataset.productId || '');
-          const name = t.dataset.productName || '';
-          const price = parseFloat(t.dataset.productPrice) || 0;
-          if (typeof window.addProductToCart === 'function') {
-            window.addProductToCart(id, name, price);
-          } else if (window.cartManager && typeof window.cartManager.addItem === 'function') {
-            window.cartManager.addItem(id, name, price);
-          } else {
-            // fallback
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const existing = cart.find(i => String(i.id) === id);
-            if (existing) existing.quantity = (existing.quantity || 1) + 1;
-            else cart.push({ id, name, price, quantity: 1 });
-            localStorage.setItem('cart', JSON.stringify(cart));
-            if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
-          }
-        });
-      });
-    } catch (err) {
-      console.error('bind add-to-cart handlers error', err);
-    }
+    // add-to-cart buttons are handled globally by `cartManager` document listener
   }
 
   filterByCategory(category) {
@@ -130,3 +105,14 @@ class ProductManager {
 
 // Initialiser
 const productManager = new ProductManager();
+
+// Auto-load products when a '.products' container exists on the page
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.querySelector('.products');
+  if (!container) return;
+  productManager.loadProducts().then(() => {
+    productManager.renderProducts(container);
+    // ensure cart badge is updated if cartManager exists
+    try { if (window.cartManager) window.cartManager.updateCart(); } catch (e) { /* ignore */ }
+  });
+});

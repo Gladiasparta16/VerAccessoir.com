@@ -43,9 +43,14 @@ class CartManager {
   }
 
   removeItem(id) {
-    const cart = this.getCart().filter(item => item.id !== id);
-    this.saveCart(cart);
-    this.updateCart();
+    // Instead of removing the item entry, set its quantity to 0
+    const cart = this.getCart();
+    const item = cart.find(i => String(i.id) === String(id));
+    if (item) {
+      item.quantity = 0;
+      this.saveCart(cart);
+      this.updateCart();
+    }
   }
 
   updateQuantity(id, quantity) {
@@ -53,8 +58,9 @@ class CartManager {
     const item = cart.find(i => i.id === id);
     if (!item) return;
     item.quantity = Math.max(0, quantity);
-    if (item.quantity === 0) this.removeItem(id);
-    else { this.saveCart(cart); this.updateCart(); }
+    // Keep item entries even at quantity 0 (allows re-incrementing later)
+    this.saveCart(cart);
+    this.updateCart();
   }
 
   getCart() {
@@ -90,12 +96,14 @@ class CartManager {
     if (!cartContainer) return;
     const cart = this.getCart();
     const cartItems = document.querySelector('.cart-items');
-    if (cart.length === 0) {
+    // Only show items with quantity > 0 in the display
+    const visible = cart.filter(i => (i.quantity || 0) > 0);
+    if (visible.length === 0) {
       if (cartItems) cartItems.innerHTML = '<p class="text-center text-muted">Votre panier est vide</p>';
       return;
     }
     if (!cartItems) return;
-    cartItems.innerHTML = cart.map(item => `
+    cartItems.innerHTML = visible.map(item => `
       <div class="cart-item">
         <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="cart-item-image">
         <div class="cart-item-details">
@@ -122,7 +130,7 @@ class CartManager {
         const input = document.querySelector(`.qty-input[data-id="${id}"]`);
         let quantity = parseInt(input.value || '0', 10);
         if (e.target.classList.contains('qty-plus')) quantity++;
-        if (e.target.classList.contains('qty-minus') && quantity > 1) quantity--;
+        if (e.target.classList.contains('qty-minus')) quantity = Math.max(0, quantity - 1);
         this.updateQuantity(id, quantity);
       };
       btn.addEventListener('click', handler);
