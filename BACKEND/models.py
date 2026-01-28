@@ -27,6 +27,7 @@ class Product(db.Model):
     image_url = db.Column(db.String(255))
     category = db.Column(db.String(50), default="autres")
     stock = db.Column(db.Integer, default=10)
+    featured = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     order_items = db.relationship("OrderItem", backref="product", lazy=True)
 
@@ -42,6 +43,7 @@ class Product(db.Model):
             "image_url": self.image_url,
             "category": self.category,
             "stock": self.stock,
+            "featured": bool(self.featured),
         }
 
 

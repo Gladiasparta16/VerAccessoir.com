@@ -59,6 +59,7 @@ def create_product():
             image_url=data.get("image_url", ""),
             category=data.get("category", "autres"),
             stock=data.get("stock", 10),
+            featured=bool(data.get("featured", False)),
         )
 
         db.session.add(product)
@@ -90,6 +91,8 @@ def update_product(product_id):
             product.category = data["category"]
         if "stock" in data:
             product.stock = data["stock"]
+        if "featured" in data:
+            product.featured = bool(data["featured"])
 
         db.session.commit()
 

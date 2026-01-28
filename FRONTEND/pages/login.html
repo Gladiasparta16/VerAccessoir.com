@@ -88,7 +88,7 @@
     <!-- Liens supplémentaires -->
     <div style="text-align: center; margin-top: 20px;">
       <p style="margin-bottom: 10px;">
-        <a href="/forgot-password.html" style="color: #ff6a00; text-decoration: none; font-weight: bold;">🔑 Mot de passe oublié?</a>
+        <a href="forgot-password.html" style="color: #ff6a00; text-decoration: none; font-weight: bold;">🔑 Mot de passe oublié?</a>
       </p>
       <p style="border-top: 1px solid #ccc; padding-top: 15px;">
         Pas encore inscrit? 
@@ -143,8 +143,10 @@
   <script src="../js/components/cart.js"></script>
   <script src="../js/cart-badge.js"></script>
   <script>
-    // ✅ SIMPLE ET FONCTIONNEL
-    document.getElementById('clientForm').addEventListener('submit', (e) => {
+    // Utiliser l'API d'authentification côté serveur pour la connexion client
+    const API_BASE = 'http://localhost:5000/api';
+
+    document.getElementById('clientForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('clientEmail').value.trim();
       const password = document.getElementById('clientPassword').value.trim();
@@ -154,25 +156,44 @@
       errorMsg.style.display = 'none';
       successMsg.style.display = 'none';
       
-      if (!email) {
-        errorMsg.textContent = '❌ Veuillez entrer votre email';
+      if (!email || !password) {
+        errorMsg.textContent = '❌ Veuillez entrer votre email et mot de passe';
         errorMsg.style.display = 'block';
         return;
       }
 
-      // ✅ Sauvegarder simplement
-      localStorage.setItem('currentUser', JSON.stringify({ 
-        email: email,
-        role: 'client',
-        loginTime: new Date().toISOString()
-      }));
-      
-      successMsg.textContent = '✓ Connexion réussie! Redirection...';
-      successMsg.style.display = 'block';
-      
-      setTimeout(() => {
-        window.location.href = '/shop.html';
-      }, 800);
+      try {
+        const resp = await fetch(API_BASE + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const text = await resp.text();
+        let data = null;
+        try { data = text ? JSON.parse(text) : null; } catch (err) { data = null; }
+
+        console.debug('Login response', resp.status, data);
+
+        if (resp.ok && data) {
+          // Sauvegarder token et utilisateur
+          if (data.access_token) localStorage.setItem('token', data.access_token);
+          if (data.user) localStorage.setItem('currentUser', JSON.stringify(data.user));
+
+          successMsg.textContent = '✓ Connexion réussie! Redirection vers Mon compte...';
+          successMsg.style.display = 'block';
+          setTimeout(() => { window.location.href = 'account.html'; }, 800);
+          return;
+        }
+
+        // Erreur de connexion
+        const errMsg = (data && (data.error || data.message)) || 'Erreur de connexion';
+        errorMsg.textContent = '❌ ' + errMsg;
+        errorMsg.style.display = 'block';
+      } catch (err) {
+        errorMsg.textContent = 'Erreur réseau: ' + err.message;
+        errorMsg.style.display = 'block';
+      }
     });
 
     function loadSocialLinks() {

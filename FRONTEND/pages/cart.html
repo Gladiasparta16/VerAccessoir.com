@@ -7,9 +7,13 @@
   <link rel="stylesheet" href="../css/styles.css">
   <style>
     .cart-container {
-      max-width: 1000px;
-      margin: 40px auto;
+      max-width: 1100px;
+      margin: 24px auto;
       padding: 20px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
     .cart-items {
       background: white;
@@ -77,6 +81,8 @@
       padding: 20px;
       border-radius: 8px;
       text-align: right;
+      box-sizing: border-box;
+      position: relative;
     }
     .summary-row {
       display: flex;
@@ -113,6 +119,16 @@
       padding: 40px;
       background: white;
       border-radius: 8px;
+    }
+
+    @media (min-width: 900px) {
+      .cart-container {
+        grid-template-columns: 1fr 360px;
+        align-items: start;
+      }
+      .cart-items { order: 1; }
+      .summary { position: sticky; top: 20px; order: 2; }
+      .checkout-form { order: 3; }
     }
   </style>
 </head>
@@ -286,6 +302,7 @@
   <script src="../js/components/products.js"></script>
   <script src="../js/components/cart.js"></script>
   <script src="../js/cart-badge.js"></script>
+  <script src="../js/main.js"></script>
   <script>
     // Charger le panier
     function loadCart() {

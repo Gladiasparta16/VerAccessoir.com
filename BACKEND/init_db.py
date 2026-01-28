@@ -17,6 +17,7 @@ with app.app_context():
                 image_url="https://via.placeholder.com/300x300?text=Classiques+Noires",
                 category="classiques",
                 stock=20,
+                featured=True,
             ),
             Product(
                 name="Lunettes Modernes Dorées",
@@ -25,6 +26,7 @@ with app.app_context():
                 image_url="https://via.placeholder.com/300x300?text=Modernes+Dorees",
                 category="modernes",
                 stock=15,
+                featured=True,
             ),
             Product(
                 name="Lunettes Solaires Aviateur",
@@ -33,6 +35,7 @@ with app.app_context():
                 image_url="https://via.placeholder.com/300x300?text=Aviateur",
                 category="solaires",
                 stock=25,
+                featured=True,
             ),
             Product(
                 name="Lunettes Vintage Marron",
@@ -131,3 +134,18 @@ with app.app_context():
         print("Info: INITIAL_TEST_USER_EMAIL not set — skipping creation of test user.")
 
     print("\n✓ Base de données initialisée avec succès!")
+
+    # S'assurer que certains produits sont marqués comme 'featured' si présents
+    try:
+        featured_names = [
+            "Lunettes Classiques Noires",
+            "Lunettes Modernes Dorées",
+            "Lunettes Solaires Aviateur",
+        ]
+        for p in Product.query.filter(Product.name.in_(featured_names)).all():
+            if not getattr(p, 'featured', False):
+                p.featured = True
+        db.session.commit()
+        print("✓ Mise à jour des produits vedette effectuée")
+    except Exception:
+        db.session.rollback()

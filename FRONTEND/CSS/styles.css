@@ -485,6 +485,22 @@ img { max-width: 100%; height: auto; display: block; }
   margin-bottom: var(--spacing-md);
 }
 
+/* Compact variant for smaller cards (used on homepage) */
+.product-card.compact {
+  transform: none;
+}
+.product-card.compact .product-image,
+.product-card.compact img {
+  height: 180px;
+}
+.product-card.compact .product-content {
+  padding: 12px;
+}
+.product-card.compact .product-title { font-size: 16px; }
+.product-card.compact .product-description { font-size: 13px; }
+.product-card.compact .product-price { font-size: 18px; }
+.product-card.compact button { padding: 8px; font-size: 13px; }
+
 .product-actions,
 .product-card button {
   display: flex;

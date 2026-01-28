@@ -86,7 +86,7 @@
     </form>
       <div style="text-align: center; margin-top: 20px;">
         <p style="margin-bottom: 10px;">
-          <a href="/forgot-password.html" style="color: #ff6a00; text-decoration: none; font-weight: bold;">🔑 Mot de passe oublié?</a>
+          <a href="forgot-password.html" style="color: #ff6a00; text-decoration: none; font-weight: bold;">🔑 Mot de passe oublié?</a>
         </p>
       </div>
   </div>
@@ -157,15 +157,29 @@
       }
 
       try {
-        const resp = await fetch('/api/auth/login', {
+        const resp = await fetch('http://localhost:5000/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
 
-        const data = await resp.json();
+        // Lire le corps en texte puis parser de façon sûre
+        const text = await resp.text();
+        let data = {};
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch (parseErr) {
+            errorMsg.textContent = 'Erreur serveur: réponse invalide';
+            errorMsg.style.display = 'block';
+            return;
+          }
+        }
+
+        console.debug('Admin login response', resp.status, data);
+
         if (!resp.ok) {
-          errorMsg.textContent = data.error || '✗ Email ou mot de passe incorrect';
+          errorMsg.textContent = (data && data.error) || resp.statusText || '✗ Email ou mot de passe incorrect';
           errorMsg.style.display = 'block';
           document.getElementById('adminPassword').value = '';
           return;
@@ -184,7 +198,7 @@
 
         successMsg.textContent = '✓ Connexion réussie! Redirection en cours...';
         successMsg.style.display = 'block';
-        setTimeout(() => { window.location.href = '/admin.html'; }, 600);
+        setTimeout(() => { window.location.href = 'admin.html'; }, 600);
       } catch (err) {
         errorMsg.textContent = 'Erreur serveur: ' + (err.message || err);
         errorMsg.style.display = 'block';

@@ -7,28 +7,36 @@ class CartManager {
 
   setupEventListeners() {
     document.addEventListener('click', (e) => {
-      const target = e.target;
-      if (!target) return;
-
-      if (target.classList.contains('add-to-cart')) {
-        const productId = target.dataset.productId;
-        const productName = target.dataset.productName;
-        const productPrice = parseFloat(target.dataset.productPrice || 0);
+      // Support clicks on buttons and their inner elements
+      const addBtn = (e.target.closest && e.target.closest('.add-to-cart')) || e.target;
+      if (addBtn && addBtn.classList && addBtn.classList.contains('add-to-cart')) {
+        const productId = String(addBtn.dataset.productId || '');
+        const productName = addBtn.dataset.productName || '';
+        const productPrice = parseFloat(addBtn.dataset.productPrice) || 0;
+        console.debug && console.debug('cart click detected:', { productId, productName, productPrice });
         this.addItem(productId, productName, productPrice);
+        return;
       }
 
-      if (target.classList.contains('btn-remove')) {
-        const id = target.dataset.id;
-        this.removeItem(id);
+      const rm = (e.target.closest && e.target.closest('.btn-remove')) || e.target;
+      if (rm && rm.classList && rm.classList.contains('btn-remove')) {
+        const id = rm.dataset.id;
+        this.removeItem(String(id));
       }
     });
   }
 
   addItem(id, name, price, quantity = 1) {
+    id = String(id);
     const cart = this.getCart();
-    const item = cart.find(item => item.id === id);
-    if (item) item.quantity += quantity;
-    else cart.push({ id, name, price, quantity, image: '' });
+    const item = cart.find(item => String(item.id) === id);
+
+    if (item) {
+      item.quantity += quantity;
+    } else {
+      cart.push({ id, name, price, quantity, image: '' });
+    }
+
     this.saveCart(cart);
     this.showNotification(`${name} ajouté au panier!`);
     this.updateCart();
@@ -158,6 +166,3 @@ class CartManager {
 // Initialiser et exposer l'instance
 const cartManager = new CartManager();
 try { window.cartManager = cartManager; } catch (e) { /* ignore */ }
-
-// Initialiser le gestionnaire de panier
-const cartManager = new CartManager();

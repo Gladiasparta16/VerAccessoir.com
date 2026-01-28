@@ -39,16 +39,42 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 @app.after_request
 def set_security_headers(response):
     """Ajouter les headers de sécurité à chaque réponse"""
-    # Use headers defined in configuration so they can be changed from .env
+    # Apply headers defined in configuration so they can be changed from .env
     sec = app.config.get("SECURITY_HEADERS", {})
-    # Apply configured headers
     for k, v in sec.items():
         try:
             response.headers[k] = v
         except Exception:
             pass
 
-    # Additional runtime headers
+    # Default security headers (only set if not provided by config)
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-XSS-Protection", "1; mode=block")
+
+    # Content Security Policy: if not already set via config, set a sensible default.
+    if "Content-Security-Policy" not in response.headers:
+        default_src = "'self'"
+        connect_src = "'self'"
+        if app.debug:
+            dev_hosts = (
+                "http://127.0.0.1:5500 http://localhost:5500 "
+                "ws://127.0.0.1:5500 ws://localhost:5500 http://127.0.0.1:9222"
+            )
+            # Allow dev hosts in both default-src and connect-src to reduce CSP noise during development
+            default_src = f"'self' {dev_hosts}"
+            connect_src = f"'self' {dev_hosts}"
+
+        response.headers["Content-Security-Policy"] = (
+            f"default-src {default_src}; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: https:; "
+            "font-src 'self'; "
+            f"connect-src {connect_src}"
+        )
+
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     response.headers["Permissions-Policy"] = (
         "geolocation=(), microphone=(), camera=(), payment=()"
     )
@@ -132,6 +158,12 @@ def health():
     return {"status": "OK", "message": "API is running"}, 200
 
 
+# Backwards-compatible health endpoint for auth prefix
+@app.route("/api/auth/health", methods=["GET"])
+def auth_health():
+    return {"status": "OK", "message": "Auth API is running"}, 200
+
+
 # =================== SERVIR LE FRONTEND ===================
 @app.route("/")
 @app.route("/index.html")
@@ -166,6 +198,12 @@ def serve_admin_login():
 @app.route("/admin")
 def serve_admin():
     return send_from_directory(os.path.join(app.static_folder, "pages"), "admin.html")
+
+
+# Supporter les requêtes qui utilisent le préfixe /pages/ (ex: /pages/cart.html)
+@app.route('/pages/<path:filename>')
+def serve_pages(filename):
+    return send_from_directory(os.path.join(app.static_folder, 'pages'), filename)
 
 
 @app.route("/forgot-password.html")
