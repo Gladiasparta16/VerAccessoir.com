@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>VerAccessoire — Accueil</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>VerAccessoire — Lunettes</h1>
+    <div id="featured-sections"></div>
+  </main>
+
+  <div class="session-float" id="promo">
+    <div>Livraison offerte à partir de 50€</div>
+    <div class="close" onclick="document.getElementById('promo').style.display='none'">✕</div>
+  </div>
+
+  <script src="../js/components/products.js"></script>
+  <script>
+    // render featured grouped sections on home
+    initProducts().then(()=> renderHomeSections('#featured-sections'));
+  </script>
+</body>
+</html>

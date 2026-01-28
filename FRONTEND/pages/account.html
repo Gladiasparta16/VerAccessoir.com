@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mon Compte | VerAccessoire</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .account-container{max-width:900px;margin:40px auto;padding:20px}
+    .card{background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+    .orders-table{width:100%;border-collapse:collapse;margin-top:15px}
+    .orders-table th,.orders-table td{padding:10px;border:1px solid #eee;text-align:left}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <a href="../index.html" class="logo">👓 VerAccessoire</a>
+      </div>
+      <div class="header-icons">
+        <a href="login.html?type=client" class="login-link">👤 Connexion</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container account-container">
+    <div class="card">
+      <h1>Mon compte</h1>
+      <p id="userInfo">Chargement...</p>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>Mes commandes</h2>
+      <table class="orders-table" id="ordersTable">
+        <thead><tr><th>ID</th><th>Date</th><th>Montant</th><th>Statut</th></tr></thead>
+        <tbody><tr><td colspan="4">Aucune commande trouvée</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000/api';
+
+    function formatDate(d){ try{ return new Date(d).toLocaleString('fr-FR'); }catch(e){return d} }
+
+    async function loadAccount(){
+      const stored = localStorage.getItem('currentUser');
+      const token = localStorage.getItem('token');
+      const userInfoEl = document.getElementById('userInfo');
+
+      if (!stored && !token){
+        userInfoEl.textContent = 'Non connecté. Nous vous redirigeons...';
+        setTimeout(()=>window.location.href='login.html',800);
+        return;
+      }
+
+      // Afficher/mettre à jour les données utilisateur
+      let user = null;
+      if (stored){
+        try{ user = JSON.parse(stored); }catch(e){ user = null; }
+      }
+
+      // Si token disponible, tenter de récupérer le profil depuis l'API
+      if (token){
+        try{
+          const meResp = await fetch(API_BASE + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+          if (meResp.ok){
+            const meData = await meResp.json();
+            if (meData) user = meData.user || meData;
+            // Mettre à jour le localStorage pour cohérence
+            try{ localStorage.setItem('currentUser', JSON.stringify(user)); }catch(e){}
+          }
+        }catch(err){ console.warn('API /auth/me failed', err); }
+      }
+
+      if (user){
+        userInfoEl.innerHTML = `<strong>${user.name || user.email}</strong>`;
+      } else {
+        userInfoEl.textContent = 'Utilisateur';
+      }
+
+      // Tenter de récupérer commandes via l'API si token disponible
+      if (token){
+        try{
+          const resp = await fetch(API_BASE + '/orders', { headers: { 'Authorization': 'Bearer ' + token } });
+          if (resp.ok){
+            const orders = await resp.json();
+            renderOrders(orders);
+            return;
+          }
+        }catch(e){ console.warn('API orders failed', e); }
+      }
+
+      // Fallback localStorage
+      const local = JSON.parse(localStorage.getItem('orders') || '[]');
+      renderOrders(local);
+    }
+
+    function renderOrders(orders){
+      const tbody = document.querySelector('#ordersTable tbody');
+      if (!orders || orders.length===0){
+        tbody.innerHTML = '<tr><td colspan="4">Aucune commande trouvée</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.map(o=>`<tr><td>#${o.id}</td><td>${formatDate(o.date||o.created_at||'')}</td><td>${o.total||o.total_amount||0} FCFA</td><td>${o.status||'En attente'}</td></tr>`).join('');
+    }
+
+    loadAccount();
+  </script>
+</body>
+</html>

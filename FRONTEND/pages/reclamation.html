@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Réclamation — VerAccessoire</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Réclamation</h1>
+    <div class="form-card">
+      <form id="reclamation-form">
+        <div class="form-row">
+          <label>Nom
+            <input type="text" name="name" required>
+          </label>
+          <label>Email
+            <input type="email" name="email" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Numéro de commande (optionnel)
+            <input type="text" name="order_id">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Message
+            <textarea name="message" required></textarea>
+          </label>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn" type="submit">Envoyer la réclamation</button>
+          <button type="reset" class="btn ghost" style="margin-left:8px">Réinitialiser</button>
+        </div>
+        <p id="result" aria-live="polite" style="margin-top:12px;"></p>
+      </form>
+    </div>
+  </main>
+
+<script>
+document.getElementById('reclamation-form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const f=e.target;
+  const payload={name:f.name.value.trim(),email:f.email.value.trim(),order_id:f.order_id.value.trim()||null,message:f.message.value.trim()};
+  const resEl=document.getElementById('result'); resEl.textContent='Envoi...';
+  try{
+    const r=await fetch('/api/reclamations', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok){ resEl.textContent='Réclamation envoyée. Réf: '+(j.id||'—'); f.reset(); }
+    else resEl.textContent='Erreur: '+(j.error||r.statusText);
+  }catch(err){ resEl.textContent='Erreur réseau.'; }
+});
+</script>
+</body>
+</html>
