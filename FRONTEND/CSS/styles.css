@@ -502,6 +502,21 @@ product-card.compact .product-description { font-size: 12px; }
 product-card.compact .product-price { font-size: 16px; }
 .product-card.compact button { padding: 8px; font-size: 13px; }
 
+/* Ensure homepage featured section shows compact tiles regardless of JS state */
+.featured .products,
+.featured .products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.featured .product-card { border-radius: 6px; padding: 6px; }
+.featured .product-card .product-image,
+.featured .product-card img { height: 110px; object-fit: cover; }
+.featured .product-card .product-content { padding: 8px; }
+.featured .product-card .product-title { font-size: 14px; font-weight:700; }
+.featured .product-card .product-description { font-size: 12px; color: #666; }
+.featured .product-card .product-price { font-size: 16px; }
+
 .product-actions,
 .product-card button {
   display: flex;
