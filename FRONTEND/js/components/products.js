@@ -35,7 +35,7 @@ class ProductManager {
         featured: true,
         price: 15000,
         description: 'Lunettes élégantes et intemporelles',
-        image: 'INDEX/images/glasses1.jpeg',
+        image: 'assets/images/products/glasses-classic.svg',
         category: 'classiques'
       },
       {
@@ -43,7 +43,7 @@ class ProductManager {
         name: 'Lunettes Modernes',
         price: 18000,
         description: 'Design contemporain et tendance',
-        image: 'INDEX/images/glasses2.jpeg',
+        image: 'assets/images/products/glasses-elegant.svg',
         category: 'modernes'
       },
       {
@@ -51,7 +51,7 @@ class ProductManager {
         name: 'Lunettes Solaires',
         price: 20000,
         description: 'Protection UV et style',
-        image: 'INDEX/images/glasses3.jpeg',
+        image: 'assets/images/products/sunglasses.svg',
         category: 'solaires'
       }
     ];

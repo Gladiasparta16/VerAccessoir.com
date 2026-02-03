@@ -1,6 +1,7 @@
 // Fichier partagé pour gérer le badge du panier sur toutes les pages
 function updateCartBadge() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let cart;
+    try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
     const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
     document.querySelectorAll('.cart-badge').forEach(badge => {
         badge.textContent = totalItems;

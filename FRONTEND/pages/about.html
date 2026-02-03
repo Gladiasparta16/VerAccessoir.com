@@ -94,10 +94,14 @@
     function loadSocialLinks() {
       const saved = localStorage.getItem('siteConfig');
       if (saved) {
-        const config = JSON.parse(saved);
-        if (config.social?.facebook) document.getElementById('facebookLink').href = config.social.facebook;
-        if (config.social?.instagram) document.getElementById('instagramLink').href = config.social.instagram;
-        if (config.social?.whatsapp) document.getElementById('whatsappLink').href = config.social.whatsapp;
+        try {
+          const config = JSON.parse(saved);
+          if (config.social?.facebook) document.getElementById('facebookLink').href = config.social.facebook;
+          if (config.social?.instagram) document.getElementById('instagramLink').href = config.social.instagram;
+          if (config.social?.whatsapp) document.getElementById('whatsappLink').href = config.social.whatsapp;
+        } catch (err) {
+          console.error('Erreur parsing siteConfig:', err);
+        }
       }
     }
     loadSocialLinks();

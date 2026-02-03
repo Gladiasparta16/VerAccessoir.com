@@ -1,5 +1,6 @@
 function addToCart(product) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart;
+  try { cart = JSON.parse(localStorage.getItem("cart") || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
   
   // S'assurer que la propriété quantity est utilisée (pas qty)
   if (!product.quantity && product.qty) {
