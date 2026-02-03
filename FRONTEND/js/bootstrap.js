@@ -29,26 +29,24 @@
     if (typeof window.addProductToCart !== 'function') {
       window.addProductToCart = function(id, name, price) {
         id = String(id);
-        let cart;
-        try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
+        const cart = window.storage.getJSON('cart', []);
         const existing = cart.find(i => String(i.id) === id);
         if (existing) existing.quantity = (existing.quantity || 1) + 1;
         else cart.push({ id, name, price, quantity: 1 });
-        localStorage.setItem('cart', JSON.stringify(cart));
+        window.storage.setJSON('cart', cart);
         if (window.cartManager && typeof window.cartManager.updateCart === 'function') window.cartManager.updateCart();
         if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
-      }; 
+      };  
     }
 
     // Simple addToCart for older pages
     if (typeof window.addToCart !== 'function') {
       window.addToCart = function(product) {
-        let cart;
-        try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
+        const cart = window.storage.getJSON('cart', []);
         const existing = cart.find(i => String(i.id) === String(product.id));
         if (existing) existing.quantity = (existing.quantity || 1) + 1;
         else cart.push(product);
-        localStorage.setItem('cart', JSON.stringify(cart));
+        window.storage.setJSON('cart', cart);
         if (window.cartManager && typeof window.cartManager.updateCart === 'function') window.cartManager.updateCart();
         if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
       };

@@ -352,45 +352,42 @@
 
     // Mettre à jour la quantité
     function updateQty(index, newValue) {
-      let cart;
-      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
+      const cart = window.storage.getJSON('cart', []);
       if (cart[index]) {
         cart[index].quantity = parseInt(newValue) || 1;
         if (cart[index].quantity <= 0) {
           cart.splice(index, 1);
         }
-        localStorage.setItem('cart', JSON.stringify(cart));
+        window.storage.setJSON('cart', cart);
         loadCart();
       }
     }
 
     // Changer la quantité avec les boutons +/-
     function changeQty(index, change) {
-      let cart;
-      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
+      const cart = window.storage.getJSON('cart', []);
       if (cart[index]) {
         cart[index].quantity = (cart[index].quantity || 1) + change;
         if (cart[index].quantity <= 0) {
           cart.splice(index, 1);
         }
-        localStorage.setItem('cart', JSON.stringify(cart));
+        window.storage.setJSON('cart', cart);
         loadCart();
       }
     }
 
     // Supprimer un article
     function removeItem(index) {
-      let cart;
-      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
+      const cart = window.storage.getJSON('cart', []);
       cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
+      window.storage.setJSON('cart', cart);
       loadCart();
     }
 
     // Calculer le total
     function updateTotal() {
       try {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const cart = window.storage.getJSON('cart', []);
         const subtotal = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
         const total = subtotal;
 
@@ -438,10 +435,9 @@
       };
 
       // Sauvegarder la commande
-      let orders;
-      try { orders = JSON.parse(localStorage.getItem('orders') || '[]'); } catch (e) { console.error('Erreur parsing orders:', e); orders = []; }
+      const orders = window.storage.getJSON('orders', []);
       orders.push(order);
-      localStorage.setItem('orders', JSON.stringify(orders));
+      window.storage.setJSON('orders', orders);
 
       // Vider le panier
       localStorage.setItem('cart', '[]');

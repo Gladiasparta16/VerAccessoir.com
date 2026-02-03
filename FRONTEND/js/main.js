@@ -144,8 +144,7 @@ function showAlert(message, type = 'info') {
 window.showAlert = showAlert;
 
 function proceedToPayment() {
-  let cart;
-  try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
+  const cart = window.storage.getJSON('cart', []);
   const token = localStorage.getItem('token');
 
   if (cart.length === 0) {

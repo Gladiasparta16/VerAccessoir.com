@@ -101,8 +101,7 @@ class APIClient {
   }
 
   static getCart() {
-    const cart = localStorage.getItem('cart');
-    try { return cart ? JSON.parse(cart) : []; } catch (e) { console.error('Erreur parsing cart:', e); return []; }
+    return window.storage.getJSON('cart', []);
   }
 
   static saveCart(cart) {

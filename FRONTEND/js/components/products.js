@@ -24,8 +24,7 @@ class ProductManager {
     } catch (error) {
       console.error('Erreur au chargement des produits:', error);
       // Charger les produits admin depuis localStorage
-      let adminProducts;
-      try { adminProducts = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); adminProducts = []; }
+      const adminProducts = window.storage.getJSON('adminProducts', []);
       if (adminProducts.length > 0) {
         this.products = adminProducts;
         this.filteredProducts = this.products;
