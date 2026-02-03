@@ -431,6 +431,8 @@
   </footer>
 
   <script src="../js/config.js"></script>
+  <script src="../js/utils/storage.js"></script>
+  <script src="../js/api/client.js"></script>
   <script src="../js/bootstrap.js"></script>
   <script>
     const API_BASE = '/api';
@@ -534,11 +536,16 @@
 
     // Charger les commandes
     function loadOrders() {
-      let orders;
-      const orders = window.storage.getJSON('orders', []);
+      let orders = [];
+      try {
+        orders = (window.storage && window.storage.getJSON) ? window.storage.getJSON('orders', []) : JSON.parse(localStorage.getItem('orders') || '[]');
+      } catch (e) {
+        console.error('Erreur loadOrders parsing:', e);
+        orders = [];
+      }
       const tableBody = document.getElementById('commandesTable');
       
-      if (orders.length === 0) {
+      if (!orders || orders.length === 0) {
         tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Aucune commande pour le moment</td></tr>';
         document.getElementById('orderCount').textContent = '0';
         document.getElementById('totalSales').textContent = '0 FCFA';
@@ -891,12 +898,14 @@
     }
 
     // Initialiser le tableau de bord
-    if (checkAuth()) {
+    (async function initAdmin() {
+      const ok = await checkAuth();
+      if (!ok) return;
       loadConfig();
       loadOrders();
       loadProducts();
       loadSocialLinks();
-    }
+    })();
   </script>
 </body>
 </html>
