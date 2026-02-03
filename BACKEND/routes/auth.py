@@ -105,7 +105,7 @@ def register():
         # 📝 Logging
         security_logger.log_auth_attempt(email=data["email"], success=True)
 
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
 
         return (
             jsonify(
@@ -145,6 +145,13 @@ def login():
         user = User.query.filter_by(email=data["email"]).first()
 
         if not user or not check_password_hash(user.password, data["password"]):
+            # Debugging: log reason
+            try:
+                import logging
+                logging.getLogger('auth_debug').warning('Login failed for %s - user_present=%s, check=%s', data.get('email'), bool(user), bool(user and check_password_hash(user.password, data.get('password'))))
+            except Exception:
+                pass
+
             # 📝 Logging tentative échouée + brute force protection
             success, message = rate_limit_manager.record_failed_login(ip)
 
@@ -164,7 +171,7 @@ def login():
         # 📝 Logging succès
         security_logger.log_auth_attempt(email=data["email"], success=True)
 
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
 
         return (
             jsonify(
