@@ -5,6 +5,16 @@ class ProductManager {
     this.filteredProducts = [];
   }
 
+  escapeHTML(str) {
+    if (str === undefined || str === null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   async loadProducts() {
     try {
       const response = await fetch('/api/products/');
@@ -68,12 +78,12 @@ class ProductManager {
       <div class="product-card ${compact ? 'compact' : ''}" data-category="${product.category || ''}">
         <img src="${product.image_url || product.image || 'https://via.placeholder.com/300x300?text=Produit'}" alt="${product.name}" class="product-image">
         <div class="product-content">
-          <h4 class="product-title">${product.name}</h4>
-          <p class="product-description">${product.description || ''}</p>
+          <h4 class="product-title">${this.escapeHTML(product.name)}</h4>
+          <p class="product-description">${this.escapeHTML(product.description || '')}</p>
           ${hidePrice ? '' : `<p class="product-price">${product.price} FCFA</p>`}
             <button type="button" class="btn btn-primary btn-sm add-to-cart" 
               data-product-id="${String(product.id)}"
-              data-product-name="${(product.name || '').replace(/"/g, '&quot;')}"
+              data-product-name="${this.escapeHTML(product.name)}"
               data-product-price="${product.price || 0}">
             Ajouter au panier
           </button>
