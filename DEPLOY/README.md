@@ -2,18 +2,17 @@ Deployment guide — quick steps
 
 This folder contains guidance and sample files to deploy the project.
 
-1) Backend (recommended: Render / Railway / Fly)
-   - Connect your GitHub repository and select branch `main` (or the branch you want).
-   - Set the root/build to the `BACKEND` folder.
-   - Install requirements from `BACKEND/requirements.txt`.
-   - Set environment variables in the host dashboard using `BACKEND/.env.example` as reference.
-   - Start command (Render / Railway):
+1) Backend (deploy anywhere supporting Python/WSGI)
+   - Connect your Git repository and select the branch to deploy.
+   - Set the root/build to the `BACKEND` folder and install requirements from `BACKEND/requirements.txt`.
+   - Set environment variables on your host using `BACKEND/.env.example` as a reference.
+   - Start command for a WSGI server (example):
        gunicorn app:app --bind 0.0.0.0:$PORT
 
-2) Frontend (recommended: Netlify / Vercel)
-   - Create a new site from Git and point to the `FRONTEND` folder.
-   - No build command needed if purely static; set publish directory to `FRONTEND`.
-   - If the backend is on a different domain, set `API_BASE_URL` in the site settings as an environment variable (Netlify: `window.API_BASE_URL`).
+2) Frontend (static hosting or serve from backend)
+   - The `FRONTEND` folder is static HTML/CSS/JS; you can host it on any static hosting or serve it with the backend.
+   - No build command needed if purely static; ensure the publish directory is `FRONTEND`.
+   - If the backend is on a different domain, configure `API_BASE_URL` appropriately in the hosting environment or via a small config file.
 
 3) Env vars (minimum)
    - SECRET_KEY

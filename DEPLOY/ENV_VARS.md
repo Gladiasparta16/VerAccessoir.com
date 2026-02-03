@@ -21,5 +21,5 @@ Frontend origin (optional):
 - FRONTEND_ORIGIN: full URL of frontend (used to build reset links)
 
 Notes:
-- Store secrets in the hosting provider's secret manager (Render / Netlify / Vercel env settings).
-- Never commit `.env` with real secrets.
+- Store secrets in your host's secret manager or a secure vault; do not commit `.env` with real secrets.
+- Ensure FLASK_DEBUG is disabled in production and use HTTPS for both frontend and backend.
