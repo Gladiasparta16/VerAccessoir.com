@@ -1,35 +1,56 @@
 // API Configuration
 // Use `window.API_BASE_URL` when provided by hosting env, else default to current origin
-const API_BASE_URL = (window.API_BASE_URL || (window.location.origin + '/api'));
+const DEFAULT_API_BASE = (window.API_BASE_URL || (window.location.origin + '/api'));
+const API_FALLBACK = 'http://127.0.0.1:5000/api';
+let API_BASE_URL = DEFAULT_API_BASE;
 
 class APIClient {
   static async request(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-      },
-      ...options
-    };
+    // Helper to perform fetch and validate JSON content-type
+    const tryFetch = async (base) => {
+      const url = `${base}${endpoint}`;
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          ...options.headers
+        },
+        ...options
+      };
 
-    // Ajouter le token JWT s'il existe
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
+      // Ajouter le token JWT s'il existe
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
 
-    try {
       const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+      const contentType = response.headers.get('Content-Type') || '';
+
+      // If not OK or not JSON (HTML error page), throw to allow fallback
+      if (!response.ok || contentType.indexOf('application/json') === -1) {
+        const text = await response.text();
+        const err = new Error(`API Error: ${response.status} for ${url}`);
+        err.status = response.status;
+        err.body = text;
+        err.contentType = contentType;
+        throw err;
       }
 
       return await response.json();
-    } catch (error) {
-      console.error('API Error:', error);
-      throw error;
+    };
+
+    try {
+      return await tryFetch(API_BASE_URL);
+    } catch (err) {
+      console.warn('Primary API failed, attempting fallback:', err.message);
+      try {
+        API_BASE_URL = API_FALLBACK; // switch to fallback for subsequent requests
+        return await tryFetch(API_BASE_URL);
+      } catch (err2) {
+        console.error('Fallback API also failed:', err2);
+        throw err2;
+      }
     }
   }
 
@@ -101,15 +122,34 @@ class APIClient {
   }
 
   static getCart() {
-    return window.storage.getJSON('cart', []);
+    if (window.storage && typeof window.storage.getJSON === 'function') {
+      return window.storage.getJSON('cart', []);
+    }
+    // Fallback
+    try {
+      const raw = localStorage.getItem('cart');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
   }
 
   static saveCart(cart) {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    if (window.storage && typeof window.storage.setJSON === 'function') {
+      return window.storage.setJSON('cart', cart);
+    }
+    try {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } catch (e) {}
   }
 
   static clearCart() {
-    localStorage.removeItem('cart');
+    if (window.storage && typeof window.storage.setJSON === 'function') {
+      return window.storage.setJSON('cart', []);
+    }
+    try {
+      localStorage.removeItem('cart');
+    } catch (e) {}
   }
 
   static getCartTotal(products) {

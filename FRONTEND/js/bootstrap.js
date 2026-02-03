@@ -29,24 +29,26 @@
     if (typeof window.addProductToCart !== 'function') {
       window.addProductToCart = function(id, name, price) {
         id = String(id);
-        const cart = window.storage.getJSON('cart', []);
+        const cart = (typeof APIClient !== 'undefined') ? APIClient.getCart() : ((window.storage && typeof window.storage.getJSON === 'function') ? window.storage.getJSON('cart', []) : []);
         const existing = cart.find(i => String(i.id) === id);
         if (existing) existing.quantity = (existing.quantity || 1) + 1;
         else cart.push({ id, name, price, quantity: 1 });
-        window.storage.setJSON('cart', cart);
+        if (typeof APIClient !== 'undefined') APIClient.saveCart(cart);
+        else if (window.storage && typeof window.storage.setJSON === 'function') window.storage.setJSON('cart', cart);
         if (window.cartManager && typeof window.cartManager.updateCart === 'function') window.cartManager.updateCart();
         if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
-      };  
+      };
     }
 
     // Simple addToCart for older pages
     if (typeof window.addToCart !== 'function') {
       window.addToCart = function(product) {
-        const cart = window.storage.getJSON('cart', []);
+        const cart = (typeof APIClient !== 'undefined') ? APIClient.getCart() : ((window.storage && typeof window.storage.getJSON === 'function') ? window.storage.getJSON('cart', []) : []);
         const existing = cart.find(i => String(i.id) === String(product.id));
         if (existing) existing.quantity = (existing.quantity || 1) + 1;
         else cart.push(product);
-        window.storage.setJSON('cart', cart);
+        if (typeof APIClient !== 'undefined') APIClient.saveCart(cart);
+        else if (window.storage && typeof window.storage.setJSON === 'function') window.storage.setJSON('cart', cart);
         if (window.cartManager && typeof window.cartManager.updateCart === 'function') window.cartManager.updateCart();
         if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
       };
@@ -58,7 +60,8 @@
         const btn = e.target.closest('.cart-icon, .icon-btn, [data-role="cart"]');
         if (btn) {
           if (btn.tagName && btn.tagName.toLowerCase() === 'a' && btn.getAttribute('href')) return;
-          window.location.href = '/pages/cart.html';
+          // Always redirect using the current origin so pages are resolved correctly for frontend hosting
+          window.location.href = window.location.origin + '/pages/cart.html';
         }
       } catch (err) { /* ignore */ }
     });

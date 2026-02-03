@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from models import db, Product
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import OperationalError
+from sqlalchemy import text
 
 products_bp = Blueprint("products", __name__)
 
@@ -11,6 +13,21 @@ def get_products():
     try:
         products = Product.query.all()
         return jsonify([product.to_dict() for product in products]), 200
+    except OperationalError as oe:
+        # Possibilité d'une colonne manquante sur la base (ex: migration manquante)
+        msg = str(oe)
+        if "no such column" in msg or "no such table" in msg:
+            # Essayer d'ajouter la colonne manquante 'featured' (migration simple pour SQLite)
+            try:
+                db.session.execute(text("ALTER TABLE product ADD COLUMN featured BOOLEAN DEFAULT 0"))
+                db.session.commit()
+                # Retry after migration
+                products = Product.query.all()
+                return jsonify([product.to_dict() for product in products]), 200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({"error": f"Migration échouée: {str(e)}"}), 500
+        return jsonify({"error": msg}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

@@ -1,46 +1,61 @@
 import sys
+import os
 import json
 import urllib.request
 import urllib.error
 import random
 import time
 
-BASE = "http://localhost:5000"
+BASE = "http://127.0.0.1:5000"
 
 results = []
+
+import requests
+
 
 def do_get(path):
     url = BASE + path
     try:
-        req = urllib.request.Request(url, headers={"User-Agent":"QA-Agent"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            body = resp.read().decode('utf-8', errors='ignore')
-            return resp.getcode(), body
-    except urllib.error.HTTPError as e:
-        return e.code, e.read().decode('utf-8', errors='ignore')
-    except Exception as e:
+        r = requests.get(url, timeout=5, headers={'User-Agent':'QA-Agent'})
+        return r.status_code, r.text
+    except requests.exceptions.RequestException as e:
         return None, str(e)
 
 
 def do_post(path, data):
     url = BASE + path
-    b = json.dumps(data).encode('utf-8')
-    req = urllib.request.Request(url, data=b, headers={
-        'Content-Type':'application/json',
-        'User-Agent':'QA-Agent'
-    })
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            body = resp.read().decode('utf-8', errors='ignore')
-            return resp.getcode(), body
-    except urllib.error.HTTPError as e:
-        return e.code, e.read().decode('utf-8', errors='ignore')
-    except Exception as e:
+        r = requests.post(url, json=data, timeout=10, headers={'User-Agent':'QA-Agent'})
+        return r.status_code, r.text
+    except requests.exceptions.RequestException as e:
+        # return None and include exception text for better debugging
         return None, str(e)
 
 
+def wait_for_server(timeout=15):
+    """Poll /api/health until server responds or timeout (seconds)."""
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            r = requests.get(BASE + '/api/health', timeout=3, headers={'User-Agent':'QA-Agent'})
+            if r.status_code == 200:
+                print('QA: Server responded to /api/health')
+                return True
+            else:
+                print(f'QA: /api/health returned {r.status_code}')
+        except requests.exceptions.RequestException as e:
+            print('QA: server not ready yet:', e)
+        time.sleep(0.5)
+    print(f'QA: server did not respond within {timeout}s')
+    return False
+
+
 print('QA: Attente 1s pour laisser le serveur démarrer...')
+# Wait for server readiness (first quick pause, then poll)
 time.sleep(1)
+if not wait_for_server(timeout=15):
+    print('\nÉCHEC: le serveur ne répond pas sur', BASE)
+    sys.exit(3)
 
 # 1. GET /api/products
 code, body = do_get('/api/products')

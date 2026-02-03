@@ -17,15 +17,16 @@ class ProductManager {
 
   async loadProducts() {
     try {
-      const response = await fetch('/api/products/');
-      this.products = await response.json();
+      // Use APIClient which has a robust fallback to local backend if needed
+      const products = await APIClient.getProducts();
+      this.products = Array.isArray(products) ? products : [];
       this.filteredProducts = this.products;
       return this.products;
     } catch (error) {
       console.error('Erreur au chargement des produits:', error);
-      // Charger les produits admin depuis localStorage
-      const adminProducts = window.storage.getJSON('adminProducts', []);
-      if (adminProducts.length > 0) {
+      // Charger les produits admin depuis localStorage (sûr si storage util présent)
+      const adminProducts = (window.storage && typeof window.storage.getJSON === 'function') ? window.storage.getJSON('adminProducts', []) : [];
+      if (adminProducts && adminProducts.length > 0) {
         this.products = adminProducts;
         this.filteredProducts = this.products;
         return this.products;
