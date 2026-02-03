@@ -306,7 +306,8 @@
   <script>
     // Charger le panier
     function loadCart() {
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let cart;
+      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
       
       // Valider et nettoyer
       if (!Array.isArray(cart)) {
@@ -351,7 +352,8 @@
 
     // Mettre à jour la quantité
     function updateQty(index, newValue) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let cart;
+      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
       if (cart[index]) {
         cart[index].quantity = parseInt(newValue) || 1;
         if (cart[index].quantity <= 0) {
@@ -364,7 +366,8 @@
 
     // Changer la quantité avec les boutons +/-
     function changeQty(index, change) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let cart;
+      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
       if (cart[index]) {
         cart[index].quantity = (cart[index].quantity || 1) + change;
         if (cart[index].quantity <= 0) {
@@ -377,7 +380,8 @@
 
     // Supprimer un article
     function removeItem(index) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let cart;
+      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
       cart.splice(index, 1);
       localStorage.setItem('cart', JSON.stringify(cart));
       loadCart();
@@ -410,7 +414,8 @@
     document.getElementById('checkoutForm').addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let cart;
+      try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); } catch (e) { console.error('Erreur parsing cart:', e); cart = []; }
       if (cart.length === 0) {
         alert('Votre panier est vide');
         return;
@@ -433,7 +438,8 @@
       };
 
       // Sauvegarder la commande
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      let orders;
+      try { orders = JSON.parse(localStorage.getItem('orders') || '[]'); } catch (e) { console.error('Erreur parsing orders:', e); orders = []; }
       orders.push(order);
       localStorage.setItem('orders', JSON.stringify(orders));
 

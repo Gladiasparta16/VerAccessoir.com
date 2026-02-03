@@ -93,7 +93,8 @@
       }
 
       // Fallback localStorage
-      const local = JSON.parse(localStorage.getItem('orders') || '[]');
+      let local;
+      try { local = JSON.parse(localStorage.getItem('orders') || '[]'); } catch (e) { console.error('Erreur parsing orders:', e); local = []; }
       renderOrders(local);
     }
 

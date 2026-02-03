@@ -534,7 +534,8 @@
 
     // Charger les commandes
     function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      let orders;
+      try { orders = JSON.parse(localStorage.getItem('orders') || '[]'); } catch (e) { console.error('Erreur parsing orders:', e); orders = []; }
       const tableBody = document.getElementById('commandesTable');
       
       if (orders.length === 0) {
@@ -617,7 +618,8 @@
         }
 
         // Fallback: utiliser localStorage
-        const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+        let products;
+        try { products = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); products = []; }
         if (products.length === 0) {
           tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">Aucun produit pour le moment</td></tr>';
           return;
@@ -658,7 +660,8 @@
         return;
       }
 
-      const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+      let products;
+      try { products = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); products = []; }
       
       // Si on édite et qu'on n'a pas de nouvelle image, récupérer l'image existante
       let imageData = imageUrl;
@@ -753,7 +756,8 @@
         setTimeout(() => { msg.className = 'message'; }, 3000);
       } catch (err) {
         // fallback local
-        const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+        let products;
+        try { products = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); products = []; }
         if (editingId) {
           const index = products.findIndex(p => p.id === parseInt(editingId));
           if (index !== -1) products[index] = Object.assign({ id: parseInt(editingId) }, product);
@@ -802,7 +806,8 @@
         await loadProducts();
       } catch (err) {
         // fallback local
-        let products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+        let products;
+        try { products = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); products = []; }
         products = products.filter(p => p.id !== productId);
         localStorage.setItem('adminProducts', JSON.stringify(products));
         loadProducts();
@@ -823,7 +828,8 @@
         await loadProducts();
       } catch (err) {
         // fallback local
-        const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+        let products;
+        try { products = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); products = []; }
         const p = products.find(p => p.id === productId);
         if (p) { p.featured = !currentValue; localStorage.setItem('adminProducts', JSON.stringify(products)); loadProducts(); }
       }
@@ -831,7 +837,8 @@
 
     // Éditer un produit
     function editProduct(productId) {
-      const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+      let products;
+      try { products = JSON.parse(localStorage.getItem('adminProducts') || '[]'); } catch (e) { console.error('Erreur parsing adminProducts:', e); products = []; }
       const product = products.find(p => p.id === productId);
       
       if (!product) {
