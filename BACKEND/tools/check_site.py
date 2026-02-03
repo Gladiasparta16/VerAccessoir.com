@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import sys
 
 BASE='http://localhost:5000'
 frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'FRONTEND'))
@@ -81,5 +82,4 @@ else:
         print(e)
 
 # exit code 0/1
-import sys
 sys.exit(0 if not errors else 1)

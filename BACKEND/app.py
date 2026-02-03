@@ -141,10 +141,10 @@ def prevent_directory_traversal():
 
 
 # =================== REGISTRER LES BLUEPRINTS ===================
-from routes.products import products_bp
-from routes.auth import auth_bp
-from routes.orders import orders_bp
-from routes.admin import admin_bp
+from routes.products import products_bp  # noqa: E402
+from routes.auth import auth_bp  # noqa: E402
+from routes.orders import orders_bp  # noqa: E402
+from routes.admin import admin_bp  # noqa: E402
 
 app.register_blueprint(products_bp, url_prefix="/api/products")
 app.register_blueprint(auth_bp, url_prefix="/api/auth")

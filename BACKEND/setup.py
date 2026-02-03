@@ -74,7 +74,7 @@ def check_dependencies():
             missing.append(package)
     
     if missing:
-        print(f"\n⚠️ Installez les paquets manquants avec:")
+        print("\n⚠️ Installez les paquets manquants avec:")
         print(f"pip install {' '.join(missing)}")
         return False
     

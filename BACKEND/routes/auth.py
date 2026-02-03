@@ -117,7 +117,7 @@ def register():
             ),
             201,
         )
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         # ⚠️ Ne PAS exposer le vrai erreur
         return jsonify({"error": "Erreur lors de l'inscription"}), 500
@@ -243,7 +243,7 @@ def forgot_password():
             if os.environ.get('FLASK_DEBUG', 'False').lower() in ('1','true','yes'):
                 return jsonify({'message': 'DEBUG: mail non configuré', 'token': token}), 200
             return jsonify({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'}), 200
-    except Exception as e:
+    except Exception:
         return jsonify({'error': 'Erreur interne'}), 500
 
 
@@ -277,6 +277,6 @@ def reset_password():
         user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
         db.session.commit()
         return jsonify({'message': 'Mot de passe réinitialisé avec succès'}), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return jsonify({'error': 'Erreur interne'}), 500

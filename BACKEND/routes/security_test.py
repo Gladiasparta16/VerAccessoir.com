@@ -13,7 +13,6 @@ security_test_bp = Blueprint("security_test", __name__)
 @security_test_bp.route("/test/sql-injection", methods=["POST"])
 def test_sql_injection():
     """Test protection SQL injection"""
-    data = request.get_json()
     # Si vous arrivez ici sans erreur, la protection fonctionne
     return (
         jsonify(
@@ -29,7 +28,6 @@ def test_sql_injection():
 @security_test_bp.route("/test/xss-protection", methods=["POST"])
 def test_xss():
     """Test protection XSS"""
-    data = request.get_json()
     return (
         jsonify(
             {
@@ -72,7 +70,6 @@ def test_password():
 def test_rate_limit():
     """Test rate limiting"""
     from rate_limiter import rate_limit_manager
-    from time import time
 
     ip = request.remote_addr
 

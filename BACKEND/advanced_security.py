@@ -4,10 +4,10 @@ Contient les protections contre les failles courantes
 """
 
 from functools import wraps
-from flask import request, jsonify, session
+from flask import request, jsonify
 import hashlib
 import hmac
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class AdvancedSecurity:
@@ -32,8 +32,8 @@ class AdvancedSecurity:
         try:
             with open("logs/security.log", "a") as f:
                 f.write(log_message + "\n")
-        except:
-            pass
+        except Exception as exc:
+            print('Erreur écriture log sécurité:', exc)
 
     @staticmethod
     def validate_input_length(data, max_length=10000):
@@ -320,7 +320,6 @@ def log_api_call(action="API_CALL"):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            user = getattr(request, "user", "unknown")
             method = request.method
             path = request.path
 

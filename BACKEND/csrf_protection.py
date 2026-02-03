@@ -4,7 +4,6 @@ Génère et valide des tokens CSRF pour toutes les opérations sensibles
 """
 
 import secrets
-import hashlib
 from flask import session, request
 from functools import wraps
 

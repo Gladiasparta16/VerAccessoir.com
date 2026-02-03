@@ -5,9 +5,8 @@ Enregistre les tentatives d'authentification, accès admin, etc.
 
 import logging
 import os
-from datetime import datetime
 from functools import wraps
-from flask import request, g
+from flask import request
 
 # Créer dossier logs s'il n'existe pas
 os.makedirs("logs", exist_ok=True)

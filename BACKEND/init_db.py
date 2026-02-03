@@ -1,5 +1,5 @@
 from app import app
-from models import db, User, Product, Order, OrderItem
+from models import db, User, Product
 from werkzeug.security import generate_password_hash
 import os
 
