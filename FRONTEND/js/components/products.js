@@ -17,9 +17,29 @@ class ProductManager {
 
   async loadProducts() {
     try {
-      // Use APIClient which has a robust fallback to local backend if needed
-      const products = await APIClient.getProducts();
+      // Prefer APIClient but fallback to fetch if APIClient not yet defined (safety for script loading order)
+      let products = [];
+      if (typeof APIClient !== 'undefined' && APIClient && typeof APIClient.getProducts === 'function') {
+        products = await APIClient.getProducts();
+      } else {
+        const resp = await fetch('/api/products/');
+        if (resp.ok) {
+          products = await resp.json();
+        } else {
+          throw new Error(`API /products returned ${resp.status}`);
+        }
+      }
+
       this.products = Array.isArray(products) ? products : [];
+      if (!this.products || this.products.length === 0) {
+        // No API products returned — use admin/local fallback
+        const adminProducts = (window.storage && typeof window.storage.getJSON === 'function') ? window.storage.getJSON('adminProducts', []) : [];
+        if (adminProducts && adminProducts.length > 0) {
+          this.products = adminProducts;
+        } else {
+          this.products = this.getDefaultProducts();
+        }
+      }
       this.filteredProducts = this.products;
       return this.products;
     } catch (error) {
@@ -46,7 +66,7 @@ class ProductManager {
         featured: true,
         price: 15000,
         description: 'Lunettes élégantes et intemporelles',
-        image: 'assets/images/products/glasses-classic.svg',
+        image: '/assets/images/products/glasses-classic.svg',
         category: 'classiques'
       },
       {
@@ -54,7 +74,7 @@ class ProductManager {
         name: 'Lunettes Modernes',
         price: 18000,
         description: 'Design contemporain et tendance',
-        image: 'assets/images/products/glasses-elegant.svg',
+        image: '/assets/images/products/glasses-elegant.svg',
         category: 'modernes'
       },
       {
@@ -62,7 +82,7 @@ class ProductManager {
         name: 'Lunettes Solaires',
         price: 20000,
         description: 'Protection UV et style',
-        image: 'assets/images/products/sunglasses.svg',
+        image: '/assets/images/products/sunglasses.svg',
         category: 'solaires'
       }
     ];

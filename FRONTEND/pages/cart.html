@@ -298,6 +298,8 @@
   </footer>
 
   <script src="../js/config.js"></script>
+  <script src="../js/utils/storage.js"></script>
+  <script src="../js/api/client.js"></script>
   <script src="../js/bootstrap.js"></script>
   <script src="../js/components/products.js"></script>
   <script src="../js/components/cart.js"></script>
@@ -342,7 +344,7 @@
                      onchange="updateQty(${index}, this.value)" style="width: 50px; text-align: center;">
                   <button onclick="changeQty(${index}, 1)">+</button>
               </div>
-              <button onclick="removeItem(${index})" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Supprimer</button>
+              <button class="btn-remove" onclick="removeItem(${index})" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Supprimer</button>
           </div>
       `).join('');
       

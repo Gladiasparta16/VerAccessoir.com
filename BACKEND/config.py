@@ -13,7 +13,24 @@ class Config:
             "❌ ERREUR CRITIQUE: SECRET_KEY non défini! Créer fichier .env avec SECRET_KEY=..."
         )
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///database.db")
+    # Normalize SQLite path to an absolute path inside BACKEND to avoid issues when
+    # the process is started from a different working directory (prevents using
+    # different empty DB files and causing intermittent auth failures).
+    _db_url = os.environ.get("DATABASE_URL", "sqlite:///database.db")
+    if _db_url.startswith("sqlite:///"):
+        _db_path = _db_url.replace("sqlite:///", "")
+        # If the user gave a relative path, prefer the file under BACKEND/instance
+        # if it exists (this is where init_db writes the DB during setup).
+        if not os.path.isabs(_db_path):
+            backend_dir = os.path.dirname(__file__)
+            candidate = os.path.join(backend_dir, _db_path)
+            instance_candidate = os.path.join(backend_dir, "instance", os.path.basename(_db_path))
+            if os.path.exists(instance_candidate):
+                _db_path = instance_candidate
+            else:
+                _db_path = candidate
+        _db_url = f"sqlite:///{os.path.abspath(_db_path)}"
+    SQLALCHEMY_DATABASE_URI = _db_url
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
